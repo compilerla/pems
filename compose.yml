@@ -1,0 +1,10 @@
+name: pems
+
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile
+    image: caltrans/pems:main
+    volumes:
+      - ./:/home/caltrans/src
