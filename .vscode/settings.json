@@ -1,4 +1,9 @@
 {
+  "[django-html][html]": {
+    "editor.defaultFormatter": "monosans.djlint",
+    "djlint.enableLinting": true,
+    "djlint.profile": "django"
+  },
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "files.associations": {
@@ -15,5 +20,8 @@
   "[python]": {
     "editor.defaultFormatter": "ms-python.black-formatter"
   },
-  "python.languageServer": "Pylance"
+  "python.languageServer": "Pylance",
+  "workbench.editorAssociations": {
+    "*.db": "sqlite-viewer.option"
+  }
 }
