@@ -1,0 +1,1 @@
+{"config":{"lang":["en"],"separator":"[\\s\\-]+","pipeline":["stopWordFilter"]},"docs":[{"location":"","title":"PeMS","text":"<p>Caltrans Performance Measurement System</p> <p>PeMS is open-source software that is designed, developed, and maintained by Compiler LLC on behalf of Caltrans Traffic Operations.</p>"}]}
