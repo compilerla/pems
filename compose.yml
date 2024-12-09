@@ -1,6 +1,15 @@
 name: pems
 
 services:
+  app:
+    build:
+      context: .
+      dockerfile: appcontainer/Dockerfile
+    image: caltrans/pems:app
+    env_file: .env
+    ports:
+      - "8000"
+
   dev:
     build:
       context: .

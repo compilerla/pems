@@ -1,0 +1,90 @@
+ARG PYTHON_VERSION=3.12
+
+# multi-stage build
+#
+# stage 1: builds the pems package from source
+#          using the git metadata for version info
+FROM python:${PYTHON_VERSION} AS build_wheel
+WORKDIR /build
+
+# upgrade pip
+RUN python -m pip install --upgrade pip && \
+    pip install build
+
+# copy source files
+COPY . .
+RUN git config --global --add safe.directory /build
+
+# build package
+RUN python -m build
+
+# multi-stage build
+#
+# stage 2: installs the pems package in a fresh base container
+#          using the pre-built package, and copying only needed source
+FROM python:${PYTHON_VERSION} as app_container
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    USER=caltrans
+
+EXPOSE 8000
+
+    # create non-root $USER and home directory
+RUN useradd --create-home --shell /bin/bash $USER && \
+    # setup $USER permissions for nginx
+    mkdir -p /var/cache/nginx && \
+    chown -R $USER:$USER /var/cache/nginx && \
+    mkdir -p /var/lib/nginx && \
+    chown -R $USER:$USER /var/lib/nginx && \
+    mkdir -p /var/log/nginx && \
+    chown -R $USER:$USER /var/log/nginx && \
+    touch /var/log/nginx/error.log && \
+    chown $USER:$USER /var/log/nginx/error.log && \
+    touch /var/run/nginx.pid && \
+    chown -R $USER:$USER /var/run/nginx.pid && \
+    # setup directories and permissions for gunicorn, (eventual) app
+    mkdir -p /$USER/app && \
+    mkdir -p /$USER/run && \
+    chown -R $USER:$USER /$USER && \
+    # install server components
+    apt-get update && \
+    apt-get install -qq --no-install-recommends build-essential nginx gettext && \
+    python -m pip install --upgrade pip
+
+# enter source directory
+WORKDIR /$USER
+
+COPY LICENSE app/LICENSE
+
+# switch to non-root $USER
+USER $USER
+
+# update env for local pip installs
+# see https://docs.python.org/3/using/cmdline.html#envvar-PYTHONUSERBASE
+# since all `pip install` commands are in the context of $USER
+# $PYTHONUSERBASE is the location used by default
+ENV PATH="$PATH:/$USER/.local/bin" \
+    PYTHONUSERBASE="/$USER/.local"
+
+# copy gunicorn config file
+COPY appcontainer/gunicorn.conf.py run/gunicorn.conf.py
+ENV GUNICORN_CONF "/$USER/run/gunicorn.conf.py"
+
+# overwrite default nginx.conf
+COPY appcontainer/nginx.conf /etc/nginx/nginx.conf
+
+WORKDIR /$USER/app
+
+# copy runtime files
+COPY --from=build_wheel /build/dist /build/dist
+COPY manage.py manage.py
+COPY bin bin
+COPY pems pems
+
+# install source as a package
+RUN pip install $(find /build/dist -name pems*.whl)
+
+# configure container executable
+ENTRYPOINT ["/bin/bash"]
+CMD ["bin/start.sh"]
