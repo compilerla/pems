@@ -14,13 +14,15 @@ services:
     build:
       context: .
       dockerfile: .devcontainer/Dockerfile
-    image: caltrans/pems:main
+    image: caltrans/pems:dev
     env_file: .env
+    # https://code.visualstudio.com/docs/remote/create-dev-container#_use-docker-compose
+    entrypoint: sleep infinity
     volumes:
       - ./:/home/caltrans/src
 
   docs:
-    image: caltrans/pems:main
+    image: caltrans/pems:dev
     entrypoint: mkdocs
     command: serve --dev-addr "0.0.0.0:8000"
     ports:
