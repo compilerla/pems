@@ -3,10 +3,17 @@
 import os
 import sys
 
+from pems import __version__ as VERSION
+
 
 def main():
     """Run administrative tasks."""
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "pems.settings")
+
+    if len(sys.argv) == 2 and sys.argv[1] == "--version" or sys.argv[1] == "-v":
+        print(f"pems, {VERSION}")
+        return
+
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
