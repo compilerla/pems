@@ -20,6 +20,14 @@ dev = [
     "pre-commit"
 ]
 
+test = [
+    "coverage",
+    "pytest",
+    "pytest-django",
+    "pytest-mock",
+    "pytest-socket",
+]
+
 [project.urls]
 Code = "https://github.com/compilerla/pems"
 Homepage = "https://compilerla.github.io/pems/"
@@ -33,6 +41,12 @@ build-backend = "setuptools.build_meta"
 line-length = 127
 target-version = ['py312']
 include = '\.pyi?$'
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "pems.settings"
+markers = [
+    "request_path: use with session_request to initialize with the given path",
+]
 
 [tool.setuptools.packages.find]
 include = ["pems*"]
