@@ -10,7 +10,8 @@ maintainers = [
   { name = "Compiler LLC", email = "dev@compiler.la" }
 ]
 dependencies = [
-  "Django==5.1.4"
+  "Django==5.1.4",
+  "gunicorn==23.0.0"
 ]
 
 [project.optional-dependencies]
