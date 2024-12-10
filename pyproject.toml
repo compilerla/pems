@@ -1,24 +1,16 @@
 [project]
 name = "pems"
-version = "0.0.1"
+dynamic = ["version"]
 description = "Caltrans Performance Measurement System (PeMS) is an application that enables access to traffic data collected by sensors that span the freeway system across all major metropolitan areas of the State of California."
 readme = "README.md"
 license = { file = "LICENSE" }
 classifiers = ["Programming Language :: Python :: 3 :: Only"]
 requires-python = ">=3.12"
-maintainers = [
-  { name = "Compiler LLC", email = "dev@compiler.la" }
-]
-dependencies = [
-  "Django==5.1.4"
-]
+maintainers = [{ name = "Compiler LLC", email = "dev@compiler.la" }]
+dependencies = ["Django==5.1.4", "gunicorn==23.0.0"]
 
 [project.optional-dependencies]
-dev = [
-    "black",
-    "flake8",
-    "pre-commit"
-]
+dev = ["black", "flake8", "pre-commit", "setuptools_scm>=8"]
 
 [project.urls]
 Code = "https://github.com/compilerla/pems"
@@ -26,14 +18,17 @@ Homepage = "https://compilerla.github.io/pems/"
 Issues = "https://github.com/compilerla/pems/issues"
 
 [build-system]
-requires = ["setuptools>=75"]
+requires = ["setuptools>=75", "setuptools_scm>=8"]
 build-backend = "setuptools.build_meta"
 
 [tool.black]
 line-length = 127
-target-version = ['py312']
+target-version = ["py312"]
 include = '\.pyi?$'
 
 [tool.setuptools.packages.find]
 include = ["pems*"]
 namespaces = false
+
+[tool.setuptools_scm]
+# intentionally left blank, but we need the section header to activate the tool
