@@ -29,3 +29,14 @@ services:
       - "8000"
     volumes:
       - ./:/caltrans/app
+
+  streamlit:
+    build:
+      context: .
+      dockerfile: streamlit_app/Dockerfile
+    image: caltrans/pems:streamlit
+    env_file: .env
+    ports:
+      - "${STREAMLIT_LOCAL_PORT:-8501}:8501"
+    volumes:
+      - ./:/caltrans/app
