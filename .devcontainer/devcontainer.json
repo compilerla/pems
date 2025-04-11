@@ -2,7 +2,7 @@
   "name": "caltrans/pems",
   "dockerComposeFile": ["../compose.yml"],
   "service": "dev",
-  "forwardPorts": ["docs:8000", "kibana:5601"],
+  "forwardPorts": ["docs:8000"],
   "workspaceFolder": "/caltrans/app",
   "postStartCommand": ["/bin/bash", "bin/reset_db.sh"],
   "postAttachCommand": ["/bin/bash", ".devcontainer/postAttach.sh"],
