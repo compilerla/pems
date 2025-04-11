@@ -29,7 +29,9 @@ jobs:
           cache-dependency-path: "**/pyproject.toml"
 
       - name: Install Python dependencies
-        run: pip install -e .[test]
+        run: |
+          pip install -e .[test]
+          pip install -r streamlit_app/requirements.txt
 
       - name: Run setup
         run: ./bin/init.sh
