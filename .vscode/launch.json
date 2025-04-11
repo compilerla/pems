@@ -27,6 +27,17 @@
         "DJANGO_DEBUG": "false",
         "DJANGO_STATICFILES_STORAGE": "django.contrib.staticfiles.storage.StaticFilesStorage"
       }
+    },
+    {
+      "name": "Streamlit",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "streamlit",
+      "args": ["run", "streamlit_app/main.py"],
+      "env": {
+        "PYTHONBUFFERED": "1",
+        "PYTHONWARNINGS": "default"
+      }
     }
   ]
 }
