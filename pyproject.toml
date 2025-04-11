@@ -31,7 +31,8 @@ include = '\.pyi?$'
 [tool.coverage.run]
 branch = true
 relative_files = true
-source = ["pems"]
+source = ["pems", "streamlit_app"]
+omit = ["streamlit_app/apps/*"]
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "pems.settings"
