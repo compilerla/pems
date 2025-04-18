@@ -13,18 +13,18 @@
 | pems/districts/migrations/0001\_initial.py |        5 |        0 |        0 |        0 |    100% |           |
 | pems/districts/migrations/\_\_init\_\_.py  |        0 |        0 |        0 |        0 |    100% |           |
 | pems/districts/models.py                   |        7 |        0 |        0 |        0 |    100% |           |
-| pems/districts/urls.py                     |        2 |        2 |        0 |        0 |      0% |       5-6 |
-| pems/districts/views.py                    |        0 |        0 |        0 |        0 |    100% |           |
+| pems/districts/urls.py                     |        4 |        4 |        0 |        0 |      0% |      5-10 |
+| pems/districts/views.py                    |       10 |        0 |        0 |        0 |    100% |           |
 | pems/settings.py                           |       23 |        0 |        0 |        0 |    100% |           |
 | pems/streamlit\_sample/\_\_init\_\_.py     |        0 |        0 |        0 |        0 |    100% |           |
 | pems/streamlit\_sample/apps.py             |        5 |        0 |        0 |        0 |    100% |           |
 | pems/streamlit\_sample/urls.py             |        3 |        3 |        0 |        0 |      0% |       1-4 |
-| pems/urls.py                               |        3 |        3 |        0 |        0 |      0% |     18-21 |
+| pems/urls.py                               |        3 |        3 |        0 |        0 |      0% |       1-4 |
 | pems/wsgi.py                               |        4 |        4 |        0 |        0 |      0% |     10-16 |
 | streamlit\_app/\_\_init\_\_.py             |        0 |        0 |        0 |        0 |    100% |           |
 | streamlit\_app/main.py                     |       21 |        0 |        2 |        0 |    100% |           |
 | streamlit\_app/utils.py                    |       35 |        0 |        4 |        0 |    100% |           |
-|                                  **TOTAL** |  **128** |   **15** |    **8** |    **1** | **88%** |           |
+|                                  **TOTAL** |  **140** |   **17** |    **8** |    **1** | **88%** |           |
 
 
 ## Setup coverage badge
