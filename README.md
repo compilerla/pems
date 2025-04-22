@@ -6,7 +6,9 @@
 |------------------------------------------- | -------: | -------: | -------: | -------: | ------: | --------: |
 | pems/\_\_init\_\_.py                       |        5 |        2 |        0 |        0 |     60% |       5-7 |
 | pems/core/\_\_init\_\_.py                  |        0 |        0 |        0 |        0 |    100% |           |
+| pems/core/context\_processors.py           |        3 |        3 |        0 |        0 |      0% |      5-11 |
 | pems/core/middleware.py                    |        9 |        1 |        2 |        1 |     82% |        19 |
+| pems/core/urls.py                          |        4 |        4 |        0 |        0 |      0% |       1-7 |
 | pems/districts/\_\_init\_\_.py             |        0 |        0 |        0 |        0 |    100% |           |
 | pems/districts/admin.py                    |        3 |        0 |        0 |        0 |    100% |           |
 | pems/districts/apps.py                     |        3 |        0 |        0 |        0 |    100% |           |
@@ -15,7 +17,7 @@
 | pems/districts/models.py                   |        7 |        0 |        0 |        0 |    100% |           |
 | pems/districts/urls.py                     |        4 |        4 |        0 |        0 |      0% |      5-10 |
 | pems/districts/views.py                    |       10 |        0 |        0 |        0 |    100% |           |
-| pems/settings.py                           |       23 |        0 |        0 |        0 |    100% |           |
+| pems/settings.py                           |       25 |        0 |        0 |        0 |    100% |           |
 | pems/streamlit\_sample/\_\_init\_\_.py     |        0 |        0 |        0 |        0 |    100% |           |
 | pems/streamlit\_sample/apps.py             |        5 |        0 |        0 |        0 |    100% |           |
 | pems/streamlit\_sample/urls.py             |        3 |        3 |        0 |        0 |      0% |       1-4 |
@@ -24,7 +26,7 @@
 | streamlit\_app/\_\_init\_\_.py             |        0 |        0 |        0 |        0 |    100% |           |
 | streamlit\_app/main.py                     |       21 |        0 |        2 |        0 |    100% |           |
 | streamlit\_app/utils.py                    |       35 |        0 |        4 |        0 |    100% |           |
-|                                  **TOTAL** |  **140** |   **17** |    **8** |    **1** | **88%** |           |
+|                                  **TOTAL** |  **149** |   **24** |    **8** |    **1** | **84%** |           |
 
 
 ## Setup coverage badge
