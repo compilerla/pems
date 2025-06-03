@@ -1,4 +1,4 @@
-FROM caltrans/pems:app
+FROM caltrans/pems:web
 
 COPY . .
 

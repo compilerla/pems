@@ -17,10 +17,10 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Start app
+      - name: Start web app
         run: |
           cp .env.sample .env
-          docker compose up --detach app
+          docker compose up --detach web
 
       - name: Run Lighthouse tests for a11y
         uses: treosh/lighthouse-ci-action@12.1.0
