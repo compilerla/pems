@@ -1,4 +1,4 @@
 django==5.1.6
 pandas==2.2.3
 pygwalker==0.4.9.15
-streamlit==1.44.1
+streamlit==1.45.1
