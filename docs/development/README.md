@@ -152,7 +152,7 @@ Feel free to inspect the environment file, but leave the defaults for now.
 Start the application service with Compose:
 
 ```shell
-docker compose up -d app
+docker compose up -d web
 ```
 
 The `-d` flag starts the service in "detatched" mode, so your terminal is still available for additional commands. Without this flag, your terminal attaches to the service container's standard output.

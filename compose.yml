@@ -1,11 +1,11 @@
 name: pems
 
 services:
-  app:
+  web:
     build:
       context: .
       dockerfile: appcontainer/Dockerfile
-    image: caltrans/pems:app
+    image: caltrans/pems:web
     env_file: .env
     ports:
       - "${DJANGO_LOCAL_PORT:-8000}:8000"
