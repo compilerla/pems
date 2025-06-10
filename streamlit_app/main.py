@@ -22,7 +22,7 @@ def django_setup():
 def main():
     logger.info("Streamlit initializing")
 
-    django_setup()
+    # django_setup()
 
     # find apps in the ./streamlit_app/apps directory and subdirectories
     # apps are python modules with a name starting with "app_"
