@@ -35,6 +35,8 @@ EXPOSE 8501
 
 COPY streamlit_app streamlit_app
 
+COPY .streamlit .streamlit
+
 RUN pip install -r streamlit_app/requirements.txt
 
 ENTRYPOINT ["./streamlit_app/entrypoint.sh"]
