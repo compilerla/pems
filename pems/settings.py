@@ -61,6 +61,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "pems.core.context_processors.pems_version",
+                "pems.core.context_processors.streamlit_host",
             ],
         },
     },
@@ -138,3 +139,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Streamlit settings
+STREAMLIT_LOCAL_PORT = os.environ.get("STREAMLIT_LOCAL_PORT", "")
+STREAMLIT_HOST = os.environ.get("STREAMLIT_HOST", f"http://localhost:{STREAMLIT_LOCAL_PORT}")
