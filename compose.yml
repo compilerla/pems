@@ -6,6 +6,7 @@ services:
       context: .
       dockerfile: appcontainer/Dockerfile
     image: caltrans/pems:web
+    command: ["-c", "bin/setup.sh && exec bin/start.sh"]
     depends_on:
       - postgres
     env_file: .env
