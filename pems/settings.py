@@ -72,11 +72,18 @@ WSGI_APPLICATION = "pems.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-STORAGE_DIR = os.environ.get("DJANGO_STORAGE_DIR", BASE_DIR)
+sslmode = os.environ.get("POSTGRES_SSLMODE", "verify-full")
+sslrootcert = os.path.join(BASE_DIR, "certs", "azure_postgres_ca_bundle.pem") if sslmode == "verify-full" else None
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": Path(STORAGE_DIR) / os.environ.get("DJANGO_DB_FILE", "django.db"),
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ.get("DJANGO_DB_NAME", "django"),
+        "USER": os.environ.get("DJANGO_DB_USER", "django"),
+        "PASSWORD": os.environ.get("DJANGO_DB_PASSWORD"),
+        "HOST": os.environ.get("POSTGRES_HOSTNAME", "postgres"),
+        "PORT": os.environ.get("POSTGRES_PORT", "5432"),
+        # https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-PARAMKEYWORDS
+        "OPTIONS": {"sslmode": sslmode, "sslrootcert": sslrootcert},
     }
 }
 

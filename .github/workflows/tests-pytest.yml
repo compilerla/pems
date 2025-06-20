@@ -17,11 +17,6 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Install system packages
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install -y gettext
-
       - uses: actions/setup-python@v5
         with:
           python-version-file: .github/workflows/.python-version
@@ -33,8 +28,8 @@ jobs:
           pip install -e .[test]
           pip install -r streamlit_app/requirements.txt
 
-      - name: Run setup
-        run: ./bin/init.sh
+      - name: Collect static files
+        run: python manage.py collectstatic --no-input
 
       - name: Run tests
         run: ./tests/pytest/run.sh
