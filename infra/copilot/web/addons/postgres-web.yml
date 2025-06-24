@@ -95,6 +95,7 @@ Resources:
       DatabaseName: !Ref postgreswebDBName
       Engine: 'aurora-postgresql'
       EngineVersion: '16.2'
+      EnableHttpEndpoint: true # enable the Data API feature
       DBClusterParameterGroupName: !Ref postgreswebDBClusterParameterGroup
       DBSubnetGroupName: !Ref postgreswebDBSubnetGroup
       Port: 5432
