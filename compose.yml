@@ -6,6 +6,10 @@ services:
       context: .
       dockerfile: appcontainer/Dockerfile
     image: caltrans/pems:web
+    command: ["-c", "bin/setup.sh && exec bin/start.sh"]
+    depends_on:
+      postgres:
+        condition: service_healthy
     env_file: .env
     ports:
       - "${DJANGO_LOCAL_PORT:-8000}:8000"
@@ -15,12 +19,43 @@ services:
       context: .
       dockerfile: .devcontainer/Dockerfile
     image: caltrans/pems:dev
+    depends_on:
+      - postgres
+      - pgweb
     env_file: .env
     # https://code.visualstudio.com/docs/remote/create-dev-container#_use-docker-compose
     entrypoint: sleep infinity
     volumes:
       - ./:/caltrans/app
       - ${HOME}/.aws:/home/caltrans/.aws
+
+  postgres:
+    image: postgres:16
+    environment:
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+    healthcheck:
+      test:
+        ["CMD", "pg_isready", "-d", "${POSTGRES_DB}", "-U", "${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 60s
+      retries: 6
+      start_period: 10s
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  pgweb:
+    image: sosedoff/pgweb
+    ports:
+      - "${PGWEB_PORT:-8081}:8081"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - PGWEB_DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOSTNAME}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable
 
   docs:
     image: caltrans/pems:dev
@@ -41,3 +76,7 @@ services:
       - "${STREAMLIT_LOCAL_PORT:-8501}:8501"
     volumes:
       - ./:/caltrans/app
+
+volumes:
+  pgdata:
+    driver: local

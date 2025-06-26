@@ -91,6 +91,9 @@ ENV GUNICORN_CONF "/$USER/run/gunicorn.conf.py"
 # overwrite default nginx.conf
 COPY appcontainer/nginx.conf /etc/nginx/nginx.conf
 
+# copy certs for PostgreSQL verify-full
+COPY appcontainer/certs/aws_global_postgres_ca_bundle.pem app/certs/aws_global_postgres_ca_bundle.pem
+
 WORKDIR /$USER/app
 
 # copy runtime files

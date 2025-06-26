@@ -42,7 +42,10 @@ variables: # Pass environment variables as key value pairs.
 
 secrets: # Pass secrets from AWS Systems Manager (SSM) Parameter Store.
   DJANGO_ALLOWED_HOSTS: /pems/web/DJANGO_ALLOWED_HOSTS # The key is the name of the environment variable, the value is the name of the SSM parameter.
-
+  DJANGO_DB_NAME: /pems/web/DJANGO_DB_NAME
+  DJANGO_DB_USER: /pems/web/DJANGO_DB_USER
+  DJANGO_DB_PASSWORD: /pems/web/DJANGO_DB_PASSWORD
+  DJANGO_DB_FIXTURES: /pems/web/DJANGO_DB_FIXTURES
 # You can override any of the values defined above by environment.
 #environments:
 #  test:

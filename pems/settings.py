@@ -2,8 +2,12 @@
 Django settings for pems project.
 """
 
+from enum import StrEnum
+import json
 from pathlib import Path
 import os
+
+from django.conf import settings
 
 
 def _filter_empty(ls):
@@ -20,6 +24,38 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "secret")
 DEBUG = os.environ.get("DJANGO_DEBUG", "False").lower() == "true"
 
 ALLOWED_HOSTS = _filter_empty(os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost").split(","))
+
+
+class RUNTIME_ENVS(StrEnum):
+    LOCAL = "local"
+    DEV = "dev"
+    TEST = "test"
+    PROD = "prod"
+
+
+def RUNTIME_ENVIRONMENT():
+    """Helper calculates the current runtime environment from ALLOWED_HOSTS."""
+
+    # usage of django.conf.settings.ALLOWED_HOSTS here (rather than the module variable directly)
+    # is to ensure dynamic calculation, e.g. for unit tests and elsewhere this setting is needed
+    env = RUNTIME_ENVS.LOCAL
+    if any(["*" in host for host in settings.ALLOWED_HOSTS]):
+        env = RUNTIME_ENVS.DEV
+    return env
+
+
+def set_aws_db_credentials() -> None:
+    """Helper to set AWS database environment variables from secret."""
+    postgres_secret = os.environ.get("POSTGRESWEB_SECRET")
+    credentials = json.loads(postgres_secret)
+    # if we have all the required keys, set database environment variables
+    required_keys = ["host", "port", "dbname", "username", "password"]
+    if all(key in credentials for key in required_keys):
+        os.environ["POSTGRES_HOSTNAME"] = credentials["host"]
+        os.environ["POSTGRES_PORT"] = str(credentials["port"])
+        os.environ["POSTGRES_DB"] = credentials["dbname"]
+        os.environ["POSTGRES_USER"] = credentials["username"]
+        os.environ["POSTGRES_PASSWORD"] = credentials["password"]
 
 
 # Application definition
@@ -72,13 +108,28 @@ WSGI_APPLICATION = "pems.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-STORAGE_DIR = os.environ.get("DJANGO_STORAGE_DIR", BASE_DIR)
+sslmode = os.environ.get("POSTGRES_SSLMODE", "verify-full")
+sslrootcert = os.path.join(BASE_DIR, "certs", "aws_global_postgres_ca_bundle.pem") if sslmode == "verify-full" else None
+
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": Path(STORAGE_DIR) / os.environ.get("DJANGO_DB_FILE", "django.db"),
+        "ENGINE": "django.db.backends.postgresql",
+        "OPTIONS": {"sslmode": sslmode, "sslrootcert": sslrootcert},
+        "NAME": os.environ.get("DJANGO_DB_NAME", "django"),
+        "USER": os.environ.get("DJANGO_DB_USER", "django"),
+        "PASSWORD": os.environ.get("DJANGO_DB_PASSWORD"),
+        "HOST": os.environ.get("POSTGRES_HOSTNAME", "postgres"),
+        "PORT": os.environ.get("POSTGRES_PORT", "5432"),
     }
 }
+if RUNTIME_ENVIRONMENT() == RUNTIME_ENVS.DEV:
+    set_aws_db_credentials()
+    DATABASES["default"].update(
+        {
+            "HOST": os.environ.get("POSTGRES_HOSTNAME"),
+            "PORT": os.environ.get("POSTGRES_PORT"),
+        }
+    )
 
 
 # Password validation

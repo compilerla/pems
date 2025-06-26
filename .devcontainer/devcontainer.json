@@ -2,9 +2,10 @@
   "name": "caltrans/pems",
   "dockerComposeFile": ["../compose.yml"],
   "service": "dev",
+  "runServices": ["dev", "pgweb"],
   "forwardPorts": ["docs:8000"],
   "workspaceFolder": "/caltrans/app",
-  "postStartCommand": ["/bin/bash", "bin/reset_db.sh"],
+  "postStartCommand": ["/bin/bash", "bin/setup.sh"],
   "postAttachCommand": ["/bin/bash", ".devcontainer/postAttach.sh"],
   "customizations": {
     "vscode": {

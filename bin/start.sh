@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -eu
 
-# initialize Django
+# prepare static files
 
-bin/init.sh
+python manage.py collectstatic --no-input
 
 # start the web server
 
