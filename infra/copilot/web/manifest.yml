@@ -31,7 +31,9 @@ exec: true # Enable running commands in your container.
 command: bin/start_aws.sh
 network:
   connect: true # Enable Service Connect for intra-environment traffic between services.
-
+  vpc:
+    security_groups:
+      - from_cfn: ${COPILOT_APPLICATION_NAME}-${COPILOT_ENVIRONMENT_NAME}-postgresSecurityGroup
 # storage:
 # readonly_fs: true       # Limit to read-only access to mounted root filesystems.
 
@@ -39,13 +41,17 @@ network:
 #
 variables: # Pass environment variables as key value pairs.
   STREAMLIT_URL: /streamlit
+  BUCKET_NAME:
+    from_cfn: ${COPILOT_APPLICATION_NAME}-${COPILOT_ENVIRONMENT_NAME}-s3webBucketName
 
 secrets: # Pass secrets from AWS Systems Manager (SSM) Parameter Store.
-  DJANGO_ALLOWED_HOSTS: /pems/web/DJANGO_ALLOWED_HOSTS # The key is the name of the environment variable, the value is the name of the SSM parameter.
-  DJANGO_DB_NAME: /pems/web/DJANGO_DB_NAME
-  DJANGO_DB_USER: /pems/web/DJANGO_DB_USER
-  DJANGO_DB_PASSWORD: /pems/web/DJANGO_DB_PASSWORD
-  DJANGO_DB_FIXTURES: /pems/web/DJANGO_DB_FIXTURES
+  DJANGO_ALLOWED_HOSTS: /pems/web/${COPILOT_ENVIRONMENT_NAME}/DJANGO_ALLOWED_HOSTS
+  DJANGO_DB_NAME: /pems/web/${COPILOT_ENVIRONMENT_NAME}/DJANGO_DB_NAME
+  DJANGO_DB_USER: /pems/web/${COPILOT_ENVIRONMENT_NAME}/DJANGO_DB_USER
+  DJANGO_DB_PASSWORD: /pems/web/${COPILOT_ENVIRONMENT_NAME}/DJANGO_DB_PASSWORD
+  DJANGO_DB_FIXTURES: /pems/web/${COPILOT_ENVIRONMENT_NAME}/DJANGO_DB_FIXTURES
+  POSTGRES_SECRET:
+    from_cfn: ${COPILOT_APPLICATION_NAME}-${COPILOT_ENVIRONMENT_NAME}-postgresAuroraSecret
 # You can override any of the values defined above by environment.
 #environments:
 #  test:

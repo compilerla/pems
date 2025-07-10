@@ -20,7 +20,7 @@ def test_runtime_environment_dev(settings):
 
 def test_set_aws_db_credentials(monkeypatch):
     creds = {"host": "db.example.com", "port": 5432, "dbname": "mydb", "username": "user", "password": "pass"}
-    monkeypatch.setenv("POSTGRESWEB_SECRET", json.dumps(creds))
+    monkeypatch.setenv("POSTGRES_SECRET", json.dumps(creds))
     set_aws_db_credentials()
 
     assert os.environ["POSTGRES_HOSTNAME"] == "db.example.com"
@@ -42,7 +42,7 @@ def test_set_aws_db_credentials_missing_keys(monkeypatch):
         "host": "db.example.com",
         "port": 5432,
     }
-    monkeypatch.setenv("POSTGRESWEB_SECRET", json.dumps(creds))
+    monkeypatch.setenv("POSTGRES_SECRET", json.dumps(creds))
 
     set_aws_db_credentials()
 

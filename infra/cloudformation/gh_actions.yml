@@ -58,7 +58,10 @@ Resources:
               - Sid: AssumeRole
                 Effect: Allow
                 Action: "sts:AssumeRole"
-                Resource: "arn:aws:iam::715841364638:role/pems-dev-EnvManagerRole"
+                Resource:
+                  - "arn:aws:iam::715841364638:role/pems-dev-EnvManagerRole"
+                  - "arn:aws:iam::715841364638:role/pems-test-EnvManagerRole"
+                  - "arn:aws:iam::715841364638:role/pems-prod-EnvManagerRole"
               - Sid: ListStackInstances
                 Effect: Allow
                 Action: "cloudformation:ListStackInstances"
@@ -67,6 +70,10 @@ Resources:
                 Effect: Allow
                 Action: "cloudformation:DescribeStacks"
                 Resource: "arn:aws:cloudformation:us-west-2:715841364638:stack/StackSet-pems-infrastructure-c95edbbc-22a7-4239-a10b-7d73ba9344c4/45d26e70-31d1-11f0-a04a-0a0876def005"
+              - Sid: UpdateStack
+                Effect: Allow
+                Action: "cloudformation:UpdateStack"
+                Resource: "arn:aws:cloudformation:us-west-2:715841364638:stack/pems-github-actions/407a9060-575b-11f0-84e3-0a0aa26e756d"
               - Sid: GetAuthorizationToken
                 Effect: Allow
                 Action: "ecr:GetAuthorizationToken"

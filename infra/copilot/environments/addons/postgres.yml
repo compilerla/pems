@@ -4,20 +4,34 @@ Parameters:
     Description: Your application's name.
   Env:
     Type: String
-    Description: The environment name your service, job, or workflow is being deployed to.
-  Name:
-    Type: String
-    Description: Your workload's name.
+    Description: The name of the environment being deployed.
   # Customize your Aurora Serverless cluster by setting the default value of the following parameters.
-  postgreswebDBName:
+  postgresDBName:
     Type: String
     Description: The name of the initial database to be created in the Aurora Serverless v2 cluster.
     Default: postgres
     # Cannot have special characters
     # Naming constraints: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Limits.html#RDS_Limits.Constraints
+  VPCID:
+    Type: String
+    Description: The ID of the VPC in which to create the Aurora Serverless v2 cluster.
+    Default: ""
+  PrivateSubnets:
+    Type: String
+    Description: The IDs of the private subnets in which to create the Aurora Serverless v2 cluster.
+    Default: ""
+
 Mappings:
-  postgreswebEnvScalingConfigurationMap:
+  postgresEnvScalingConfigurationMap:
     dev:
+      "DBMinCapacity": 0.5 # AllowedValues: from 0.5 through 128
+      "DBMaxCapacity": 8 # AllowedValues: from 0.5 through 128
+
+    prod:
+      "DBMinCapacity": 0.5 # AllowedValues: from 0.5 through 128
+      "DBMaxCapacity": 8 # AllowedValues: from 0.5 through 128
+
+    test:
       "DBMinCapacity": 0.5 # AllowedValues: from 0.5 through 128
       "DBMaxCapacity": 8 # AllowedValues: from 0.5 through 128
 
@@ -26,41 +40,45 @@ Mappings:
       "DBMaxCapacity": 8 # AllowedValues: from 0.5 through 128
 
 Resources:
-  postgreswebDBSubnetGroup:
+  postgresDBSubnetGroup:
     Type: "AWS::RDS::DBSubnetGroup"
     Properties:
-      DBSubnetGroupDescription: Group of Copilot private subnets for Aurora Serverless v2 cluster.
-      SubnetIds:
-        !Split [",", { "Fn::ImportValue": !Sub "${App}-${Env}-PrivateSubnets" }]
-  postgreswebSecurityGroup:
+      DBSubnetGroupDescription: Group of private subnets for Aurora Serverless v2 cluster.
+      SubnetIds: !Split [",", !Ref PrivateSubnets]
+
+  postgresWorkloadSecurityGroup:
     Metadata:
-      "aws:copilot:description": "A security group for your workload to access the Aurora Serverless v2 cluster postgresweb"
+      "aws:copilot:description": "A security group for one or more workloads to access the Aurora Serverless v2 cluster postgres"
     Type: "AWS::EC2::SecurityGroup"
     Properties:
-      GroupDescription: !Sub "The Security Group for ${Name} to access Aurora Serverless v2 cluster postgresweb."
-      VpcId:
-        Fn::ImportValue: !Sub "${App}-${Env}-VpcId"
+      GroupDescription: "The Security Group to access Aurora Serverless v2 cluster postgres."
+      VpcId: !Ref VPCID
       Tags:
         - Key: Name
-          Value: !Sub "copilot-${App}-${Env}-${Name}-Aurora"
-  postgreswebDBClusterSecurityGroup:
+          Value: !Sub "copilot-${App}-${Env}-Aurora"
+
+  postgresDBClusterSecurityGroup:
     Metadata:
-      "aws:copilot:description": "A security group for your Aurora Serverless v2 cluster postgresweb"
+      "aws:copilot:description": "A security group for your Aurora Serverless v2 cluster postgres"
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: The Security Group for the Aurora Serverless v2 cluster.
-      SecurityGroupIngress:
-        - ToPort: 5432
-          FromPort: 5432
-          IpProtocol: tcp
-          Description: !Sub "From the Aurora Security Group of the workload ${Name}."
-          SourceSecurityGroupId: !Ref postgreswebSecurityGroup
-      VpcId:
-        Fn::ImportValue: !Sub "${App}-${Env}-VpcId"
+      VpcId: !Ref VPCID
       Tags:
         - Key: Name
-          Value: !Sub "copilot-${App}-${Env}-${Name}-Aurora"
-  postgreswebAuroraSecret:
+          Value: !Sub "copilot-${App}-${Env}-Aurora"
+
+  postgresDBClusterSecurityGroupIngressFromWorkload:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: Ingress from one or more workloads in the environment.
+      GroupId: !Ref postgresDBClusterSecurityGroup
+      IpProtocol: tcp
+      ToPort: 5432
+      FromPort: 5432
+      SourceSecurityGroupId: !Ref postgresWorkloadSecurityGroup
+
+  postgresAuroraSecret:
     Metadata:
       "aws:copilot:description": "A Secrets Manager secret to store your DB credentials"
     Type: AWS::SecretsManager::Secret
@@ -72,7 +90,7 @@ Resources:
         ExcludePunctuation: true
         IncludeSpace: false
         PasswordLength: 16
-  postgreswebDBClusterParameterGroup:
+  postgresDBClusterParameterGroup:
     Metadata:
       "aws:copilot:description": "A DB parameter group for engine configuration values"
     Type: "AWS::RDS::DBClusterParameterGroup"
@@ -81,9 +99,10 @@ Resources:
       Family: "aurora-postgresql16"
       Parameters:
         client_encoding: "UTF8"
-  postgreswebDBCluster:
+
+  postgresDBCluster:
     Metadata:
-      "aws:copilot:description": "The postgresweb Aurora Serverless v2 database cluster"
+      "aws:copilot:description": "The postgres Aurora Serverless v2 database cluster"
     Type: "AWS::RDS::DBCluster"
     Properties:
       MasterUsername:
@@ -91,7 +110,7 @@ Resources:
           "",
           [
             "{{resolve:secretsmanager:",
-            !Ref postgreswebAuroraSecret,
+            !Ref postgresAuroraSecret,
             ":SecretString:username}}",
           ],
         ]
@@ -100,31 +119,31 @@ Resources:
           "",
           [
             "{{resolve:secretsmanager:",
-            !Ref postgreswebAuroraSecret,
+            !Ref postgresAuroraSecret,
             ":SecretString:password}}",
           ],
         ]
-      DatabaseName: !Ref postgreswebDBName
+      DatabaseName: !Ref postgresDBName
       Engine: "aurora-postgresql"
       EngineVersion: "16.2"
-      EnableHttpEndpoint: true # enable the Data API feature
-      DBClusterParameterGroupName: !Ref postgreswebDBClusterParameterGroup
-      DBSubnetGroupName: !Ref postgreswebDBSubnetGroup
+      DBClusterParameterGroupName: !Ref postgresDBClusterParameterGroup
+      DBSubnetGroupName: !Ref postgresDBSubnetGroup
       Port: 5432
       VpcSecurityGroupIds:
-        - !Ref postgreswebDBClusterSecurityGroup
+        - !Ref postgresDBClusterSecurityGroup
       ServerlessV2ScalingConfiguration:
         # Replace "All" below with "!Ref Env" to set different autoscaling limits per environment.
         MinCapacity:
-          !FindInMap [postgreswebEnvScalingConfigurationMap, All, DBMinCapacity]
+          !FindInMap [postgresEnvScalingConfigurationMap, All, DBMinCapacity]
         MaxCapacity:
-          !FindInMap [postgreswebEnvScalingConfigurationMap, All, DBMaxCapacity]
-  postgreswebDBWriterInstance:
+          !FindInMap [postgresEnvScalingConfigurationMap, All, DBMaxCapacity]
+
+  postgresDBWriterInstance:
     Metadata:
-      "aws:copilot:description": "The postgresweb Aurora Serverless v2 writer instance"
+      "aws:copilot:description": "The postgres Aurora Serverless v2 writer instance"
     Type: "AWS::RDS::DBInstance"
     Properties:
-      DBClusterIdentifier: !Ref postgreswebDBCluster
+      DBClusterIdentifier: !Ref postgresDBCluster
       DBInstanceClass: db.serverless
       Engine: "aurora-postgresql"
       PromotionTier: 1
@@ -133,16 +152,21 @@ Resources:
         - !GetAZs
           Ref: AWS::Region
 
-  postgreswebSecretAuroraClusterAttachment:
+  postgresSecretAuroraClusterAttachment:
     Type: AWS::SecretsManager::SecretTargetAttachment
     Properties:
-      SecretId: !Ref postgreswebAuroraSecret
-      TargetId: !Ref postgreswebDBCluster
+      SecretId: !Ref postgresAuroraSecret
+      TargetId: !Ref postgresDBCluster
       TargetType: AWS::RDS::DBCluster
+
 Outputs:
-  postgreswebSecret: # injected as POSTGRESWEB_SECRET environment variable by Copilot.
+  postgresSecret:
     Description: "The JSON secret that holds the database username and password. Fields are 'host', 'port', 'dbname', 'username', 'password', 'dbClusterIdentifier' and 'engine'"
-    Value: !Ref postgreswebAuroraSecret
-  postgreswebSecurityGroup:
+    Value: !Ref postgresAuroraSecret
+    Export:
+      Name: !Sub ${App}-${Env}-postgresAuroraSecret
+  postgresSecurityGroup:
     Description: "The security group to attach to the workload."
-    Value: !Ref postgreswebSecurityGroup
+    Value: !Ref postgresWorkloadSecurityGroup
+    Export:
+      Name: !Sub ${App}-${Env}-postgresSecurityGroup

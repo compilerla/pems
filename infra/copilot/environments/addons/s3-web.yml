@@ -4,14 +4,12 @@ Parameters:
     Description: Your application's name.
   Env:
     Type: String
-    Description: The environment name your service, job, or workflow is being deployed to.
-  Name:
-    Type: String
-    Description: Your workload's name.
+    Description: The name of the environment being deployed.
+
 Resources:
-  pemsdbBucket:
+  s3webBucket:
     Metadata:
-      "aws:copilot:description": "An Amazon S3 bucket to store and retrieve objects for pems-db"
+      "aws:copilot:description": "An Amazon S3 bucket, s3-web, for storing and retrieving objects"
     Type: AWS::S3::Bucket
     Properties:
       VersioningConfiguration:
@@ -37,7 +35,7 @@ Resources:
             AbortIncompleteMultipartUpload:
               DaysAfterInitiation: 1
 
-  pemsdbBucketPolicy:
+  s3webBucketPolicy:
     Metadata:
       "aws:copilot:description": "A bucket policy to deny unencrypted access to the bucket and its contents"
     Type: AWS::S3::BucketPolicy
@@ -51,43 +49,21 @@ Resources:
             Principal: "*"
             Action: "s3:*"
             Resource:
-              - !Sub ${ pemsdbBucket.Arn}/*
-              - !Sub ${ pemsdbBucket.Arn}
+              - !Sub ${ s3webBucket.Arn}/*
+              - !Sub ${ s3webBucket.Arn}
             Condition:
               Bool:
                 "aws:SecureTransport": false
-      Bucket: !Ref pemsdbBucket
-
-  pemsdbAccessPolicy:
-    Metadata:
-      "aws:copilot:description": "An IAM ManagedPolicy for your service to access the pems-db bucket"
-    Type: AWS::IAM::ManagedPolicy
-    Properties:
-      Description: !Sub
-        - Grants CRUD access to the S3 bucket ${Bucket}
-        - { Bucket: !Ref pemsdbBucket }
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Sid: S3ObjectActions
-            Effect: Allow
-            Action:
-              - s3:GetObject
-              - s3:PutObject
-              - s3:PutObjectACL
-              - s3:PutObjectTagging
-              - s3:DeleteObject
-              - s3:RestoreObject
-            Resource: !Sub ${ pemsdbBucket.Arn}/*
-          - Sid: S3ListAction
-            Effect: Allow
-            Action: s3:ListBucket
-            Resource: !Sub ${ pemsdbBucket.Arn}
+      Bucket: !Ref s3webBucket
 
 Outputs:
-  pemsdbName:
+  s3webName:
     Description: "The name of a user-defined bucket."
-    Value: !Ref pemsdbBucket
-  pemsdbAccessPolicy:
-    Description: "The IAM::ManagedPolicy to attach to the task role"
-    Value: !Ref pemsdbAccessPolicy
+    Value: !Ref s3webBucket
+    Export:
+      Name: !Sub ${App}-${Env}-s3webBucketName
+  s3webBucketARN:
+    Description: "The ARN of the s3-web bucket."
+    Value: !GetAtt s3webBucket.Arn
+    Export:
+      Name: !Sub ${App}-${Env}-s3webBucketARN

@@ -46,7 +46,7 @@ def RUNTIME_ENVIRONMENT():
 
 def set_aws_db_credentials() -> None:
     """Helper to set AWS database environment variables from secret."""
-    postgres_secret = os.environ.get("POSTGRESWEB_SECRET")
+    postgres_secret = os.environ.get("POSTGRES_SECRET")
     credentials = json.loads(postgres_secret)
     # if we have all the required keys, set database environment variables
     required_keys = ["host", "port", "dbname", "username", "password"]
