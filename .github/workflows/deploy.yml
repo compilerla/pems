@@ -87,11 +87,11 @@ jobs:
           sudo mv ./.tools/copilot /usr/local/bin/copilot
 
       - name: Deploy web Service
-        run: copilot deploy --name web --env ${{ github.environment }}
+        run: copilot deploy --name web --env ${{ vars.ENVIRONMENT_NAME }}
         working-directory: ./infra
 
       - name: Deploy streamlit Service
-        run: copilot deploy --name streamlit --env ${{ github.environment }}
+        run: copilot deploy --name streamlit --env ${{ vars.ENVIRONMENT_NAME }}
         working-directory: ./infra
 
   release:
