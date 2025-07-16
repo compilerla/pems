@@ -1,85 +1,74 @@
-from pathlib import Path
-
-import os
+import re
+import boto3
 import pandas as pd
 import streamlit as st
 
+S3_BUCKET = "caltrans-pems-prd-us-west-2-marts"
+STATIONS_METADATA_KEY = "geo/current_stations.parquet"
+DATA_PREFIX = "imputation/detector_imputed_agg_five_minutes"
 
-APP_DIR = Path(__file__).parent
+
+@st.cache_data(ttl=3600)  # Cache for 1 hour
+def load_station_metadata(district_number: str) -> pd.DataFrame:
+    """Loads metadata for all stations in the selected District from S3."""
+
+    filters = [("DISTRICT", "=", district_number)]
+
+    return pd.read_parquet(
+        f"s3://{S3_BUCKET}/{STATIONS_METADATA_KEY}",
+        columns=[
+            "STATION_ID",
+            "NAME",
+            "PHYSICAL_LANES",
+            "STATE_POSTMILE",
+            "ABSOLUTE_POSTMILE",
+            "LATITUDE",
+            "LONGITUDE",
+            "LENGTH",
+            "STATION_TYPE",
+            "DISTRICT",
+            "FREEWAY",
+            "DIRECTION",
+            "COUNTY_NAME",
+            "CITY_NAME",
+        ],
+        filters=filters,
+    )
 
 
-@st.cache_data()
-def fetch_data():
-    all_files = os.listdir(APP_DIR)
-    # Get station metadata files
-    station_files = [f for f in all_files if "_text_meta_" in f and f.endswith(".txt")]
+@st.cache_data(ttl=3600)  # Cache for 1 hour
+def get_available_days() -> set:
+    """
+    Lists available days by inspecting S3 prefixes.
+    """
 
-    df_list = []
-    for f in station_files:
-        file_path = os.path.join(APP_DIR, f)
-        df = pd.read_csv(file_path, delimiter="\t")
-        df_list.append(df)
-    # Combine into a single DataFrame
-    df_all = pd.concat(df_list, ignore_index=True)
+    s3 = boto3.client("s3")
+    s3_keys = s3.list_objects(Bucket=S3_BUCKET, Prefix=DATA_PREFIX)
 
-    data = df_all.dropna(subset=["Latitude", "Longitude"])
-    data.loc[:, "State_PM"] = data["State_PM"].astype(str)
-    data.loc[:, "User_ID_1"] = data["User_ID_1"].astype(str)
-    return data
+    days = set()
 
+    for item in s3_keys["Contents"]:
+        s3_path = item["Key"]
+        # Find "day=", then capture one or more digits that immediately follow it
+        match = re.search(r"day=(\d+)", s3_path)
+        if match:
+            # add as int only the text captured by the first set of parentheses to the set
+            days.add(int(match.group(1)))
+
+    return sorted(days)
+
+
+# --- STREAMLIT APP ---
 
 query_params = st.query_params
 district_number = query_params.get("district_number", "")
-district_number = int(district_number) if district_number else district_number  # Ensure district_number is an integer
 
-st.set_page_config(layout="wide")
+df_station_metadata = load_station_metadata(district_number)
+st.dataframe(df_station_metadata, use_container_width=True)
 
-df = fetch_data()
-if district_number:
-    # filter to just the current district
-    df = df[df["District"] == district_number]
-    st.title(f"District {district_number} Station Viewer")
-else:
-    st.title("Districts Station Viewer")
+station = st.selectbox(
+    "Station",
+    df_station_metadata["STATION_ID"],
+)
 
-left_col, center_col, right_col = st.columns([1, 2, 2])
-
-with left_col:
-    # Create filters
-    id_options = ["All"] + sorted(df["ID"].dropna().unique().tolist())
-    selected_id = st.selectbox("Select Station", id_options)
-
-    fwy_options = ["All"] + sorted(df["Fwy"].dropna().unique().tolist())
-    selected_fwy = st.selectbox("Select Freeway", fwy_options)
-
-    dir_options = ["All"] + sorted(df["Dir"].dropna().unique().tolist())
-    selected_dir = st.selectbox("Select Direction", dir_options)
-
-    type_options = ["All"] + sorted(df["Type"].dropna().unique().tolist())
-    selected_type = st.selectbox("Select Type", type_options)
-
-# Apply filters
-filtered_df = df.copy()
-
-if selected_id != "All":
-    filtered_df = filtered_df[filtered_df["ID"] == selected_id]
-
-if selected_fwy != "All":
-    filtered_df = filtered_df[filtered_df["Fwy"] == selected_fwy]
-
-if selected_dir != "All":
-    filtered_df = filtered_df[filtered_df["Dir"] == selected_dir]
-
-if selected_type != "All":
-    filtered_df = filtered_df[filtered_df["Type"] == selected_type]
-
-with center_col:
-    # Show filtered data
-    st.write(f"**Stations:** {filtered_df.shape[0]:,.0f}")
-    st.write(f"**Directional distance:** {filtered_df["Length"].sum():,.1f} mi")
-    st.dataframe(filtered_df, use_container_width=True)
-
-with right_col:
-    # Rename columns to match Streamlit's expected format
-    map_df = filtered_df.rename(columns={"Latitude": "latitude", "Longitude": "longitude"})
-    st.map(map_df[["latitude", "longitude"]])
+days = st.multiselect("Days", get_available_days())
