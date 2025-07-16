@@ -58,6 +58,27 @@ def get_available_days() -> set:
     return sorted(days)
 
 
+def load_station_data(station_id: str) -> pd.DataFrame:
+    """
+    Loads station data for a specific station.
+    """
+
+    filters = [("STATION_ID", "=", station_id)]
+
+    return pd.read_parquet(
+        f"s3://{S3_BUCKET}/{DATA_PREFIX}",
+        columns=[
+            "STATION_ID",
+            "LANE",
+            "SAMPLE_TIMESTAMP",
+            "VOLUME_SUM",
+            "SPEED_FIVE_MINS",
+            "OCCUPANCY_AVG",
+        ],
+        filters=filters,
+    )
+
+
 # --- STREAMLIT APP ---
 
 query_params = st.query_params
