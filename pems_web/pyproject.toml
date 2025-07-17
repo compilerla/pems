@@ -1,5 +1,5 @@
 [project]
-name = "pems"
+name = "pems_web"
 dynamic = ["version"]
 description = "Caltrans Performance Measurement System (PeMS) is an application that enables access to traffic data collected by sensors that span the freeway system across all major metropolitan areas of the State of California."
 readme = "README.md"
@@ -58,7 +58,8 @@ use_gitignore = true
 DJANGO_SETTINGS_MODULE = "tests.pytest.settings"
 
 [tool.setuptools.packages.find]
-include = ["pems*"]
+where = ["src"]
+include = ["pems_web*"]
 namespaces = false
 
 [tool.setuptools_scm]
