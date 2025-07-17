@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class DistrictConfig(AppConfig):
-    name = "pems.districts"
+    name = "pems_web.districts"

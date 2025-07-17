@@ -1,5 +1,6 @@
 import pytest
-from pems.core.context_processors import streamlit
+
+from pems_web.core.context_processors import streamlit
 
 
 @pytest.mark.parametrize("url", ["http://sthost.gov", "http://localhost:8501"])
