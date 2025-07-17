@@ -12,7 +12,9 @@ RUN python -m pip install --upgrade pip && \
     pip install build
 
 # copy source files
-COPY . .
+COPY pems_web/pyproject.toml .
+COPY pems_web/src ./src
+COPY .git .git
 RUN git config --global --add safe.directory /build
 
 # build package
@@ -85,14 +87,14 @@ ENV PATH="$PATH:/$USER/.local/bin" \
     PYTHONUSERBASE="/$USER/.local"
 
 # copy gunicorn config file
-COPY appcontainer/gunicorn.conf.py run/gunicorn.conf.py
+COPY pems_web/container/gunicorn.conf.py run/gunicorn.conf.py
 ENV GUNICORN_CONF "/$USER/run/gunicorn.conf.py"
 
 # overwrite default nginx.conf
-COPY appcontainer/nginx.conf /etc/nginx/nginx.conf
+COPY pems_web/container/nginx.conf /etc/nginx/nginx.conf
 
 # copy certs for PostgreSQL verify-full
-COPY appcontainer/certs/aws_global_postgres_ca_bundle.pem app/certs/aws_global_postgres_ca_bundle.pem
+COPY pems_web/container/certs/aws_global_postgres_ca_bundle.pem app/certs/aws_global_postgres_ca_bundle.pem
 
 WORKDIR /$USER/app
 
@@ -100,10 +102,10 @@ WORKDIR /$USER/app
 COPY --from=build_wheel /build/dist /build/dist
 COPY manage.py manage.py
 COPY bin bin
-COPY pems pems
+COPY pems_web pems_web
 
 # install source as a package
-RUN pip install $(find /build/dist -name pems*.whl)
+RUN pip install $(find /build/dist -name pems_web*.whl)
 
 # configure container executable
 ENTRYPOINT ["/bin/bash"]

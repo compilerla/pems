@@ -18,7 +18,7 @@ http:
 image:
   # Docker build arguments. For additional overrides: https://aws.github.io/copilot-cli/docs/manifest/lb-web-service/#image-build
   build:
-    dockerfile: ../appcontainer/Dockerfile
+    dockerfile: ../pems_web/container/Dockerfile
     context: ../
   # Port exposed through your container to route traffic to it.
   port: 8000

@@ -4,7 +4,7 @@ services:
   web:
     build:
       context: .
-      dockerfile: appcontainer/Dockerfile
+      dockerfile: pems_web/container/Dockerfile
     image: caltrans/pems:web
     command: ["-c", "bin/setup.sh && exec bin/start.sh"]
     depends_on:
