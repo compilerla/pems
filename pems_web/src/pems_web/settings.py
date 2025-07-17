@@ -1,11 +1,11 @@
 """
-Django settings for pems project.
+Django settings for the pems_web project.
 """
 
-from enum import StrEnum
 import json
-from pathlib import Path
 import os
+from enum import StrEnum
+from pathlib import Path
 
 from django.conf import settings
 
@@ -67,15 +67,15 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "pems.core",
-    "pems.clearinghouse",
-    "pems.districts",
+    "pems_web.core",
+    "pems_web.clearinghouse",
+    "pems_web.districts",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "pems.core.middleware.Healthcheck",
+    "pems_web.core.middleware.Healthcheck",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -83,12 +83,12 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "pems.urls"
+ROOT_URLCONF = "pems_web.urls"
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, "pems", "templates")],
+        "DIRS": [os.path.join(BASE_DIR, "pems_web", "templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -96,14 +96,14 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "pems.core.context_processors.pems_version",
-                "pems.core.context_processors.streamlit",
+                "pems_web.core.context_processors.pems_version",
+                "pems_web.core.context_processors.streamlit",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = "pems.wsgi.application"
+WSGI_APPLICATION = "pems_web.wsgi.application"
 
 
 # Database
@@ -169,7 +169,7 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "pems", "static")]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "pems_web", "static")]
 
 # use Manifest Static Files Storage by default
 STORAGES = {

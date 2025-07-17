@@ -1,7 +1,7 @@
 import pytest
 
-from pems.districts import views
-from pems.districts.models import District
+from pems_web.districts import views
+from pems_web.districts.models import District
 
 
 class TestIndexView:

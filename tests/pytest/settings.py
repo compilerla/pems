@@ -1,4 +1,4 @@
-from pems.settings import *  # noqa: F401, F403
+from pems_web.settings import *  # noqa: F401, F403
 
 DATABASES = {
     "default": {

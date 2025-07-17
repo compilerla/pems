@@ -1,4 +1,4 @@
-from pems.core.middleware import HEALTHCHECK_PATH
+from pems_web.core.middleware import HEALTHCHECK_PATH
 
 
 def test_healthcheck(client):
