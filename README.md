@@ -5,6 +5,8 @@
 | Name                                          |    Stmts |     Miss |   Branch |   BrPart |   Cover |   Missing |
 |---------------------------------------------- | -------: | -------: | -------: | -------: | ------: | --------: |
 | pems/\_\_init\_\_.py                          |        5 |        2 |        0 |        0 |     60% |       5-7 |
+| pems/clearinghouse/\_\_init\_\_.py            |        0 |        0 |        0 |        0 |    100% |           |
+| pems/clearinghouse/apps.py                    |        4 |        0 |        0 |        0 |    100% |           |
 | pems/core/\_\_init\_\_.py                     |        0 |        0 |        0 |        0 |    100% |           |
 | pems/core/context\_processors.py              |        6 |        1 |        0 |        0 |     83% |        12 |
 | pems/core/management/\_\_init\_\_.py          |        0 |        0 |        0 |        0 |    100% |           |
@@ -20,13 +22,13 @@
 | pems/districts/models.py                      |        7 |        0 |        0 |        0 |    100% |           |
 | pems/districts/urls.py                        |        4 |        4 |        0 |        0 |      0% |      5-10 |
 | pems/districts/views.py                       |       17 |        0 |        0 |        0 |    100% |           |
-| pems/settings.py                              |       53 |        2 |        6 |        1 |     95% |   126-127 |
+| pems/settings.py                              |       53 |        2 |        6 |        1 |     95% |   127-128 |
 | pems/urls.py                                  |        3 |        3 |        0 |        0 |      0% |       1-4 |
 | pems/wsgi.py                                  |        4 |        4 |        0 |        0 |      0% |     10-16 |
 | streamlit\_app/\_\_init\_\_.py                |        0 |        0 |        0 |        0 |    100% |           |
 | streamlit\_app/main.py                        |       16 |        0 |        2 |        0 |    100% |           |
 | streamlit\_app/utils.py                       |       35 |        0 |        4 |        0 |    100% |           |
-|                                     **TOTAL** |  **355** |   **25** |   **56** |    **6** | **92%** |           |
+|                                     **TOTAL** |  **359** |   **25** |   **56** |    **6** | **93%** |           |
 
 
 ## Setup coverage badge
