@@ -17,7 +17,7 @@ http:
 image:
   # Docker build arguments. For additional overrides: https://aws.github.io/copilot-cli/docs/manifest/backend-service/#image-build
   build:
-    dockerfile: ../streamlit_app/Dockerfile
+    dockerfile: ../pems_streamlit/container/Dockerfile
     context: ../
   # Port exposed through your container to route traffic to it.
   port: 8501
