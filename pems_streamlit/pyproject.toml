@@ -1,0 +1,27 @@
+[project]
+name = "pems_streamlit"
+description = "The Streamlit application for PeMS data visualizations."
+dynamic = ["version"]
+requires-python = ">=3.12"
+dependencies = [
+    "boto3==1.39.7",
+    "django==5.2.3",
+    "pandas==2.3.0",
+    "streamlit==1.45.1",
+]
+
+[build-system]
+requires = ["setuptools>=75", "setuptools_scm>=8"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["pems_streamlit*"]
+namespaces = false
+
+[tool.setuptools.package-data]
+pems_streamlit = ["*.txt"]
+
+[tool.setuptools_scm]
+# Tell scm to look one directory up for the .git folder
+root = ".."
