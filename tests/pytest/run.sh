@@ -5,6 +5,6 @@ set -eu
 coverage run -m pytest
 
 # clean out old coverage results
-rm -rf pems/static/coverage
+rm -rf static/coverage
 
-coverage html --directory pems/static/coverage
+coverage html --directory static/coverage
