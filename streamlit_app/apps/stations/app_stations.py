@@ -93,3 +93,9 @@ station = st.selectbox(
 )
 
 days = st.multiselect("Days", get_available_days())
+
+station_data_button = st.button("Load Station Data", type="primary")
+
+if station_data_button:
+    df_station_data = load_station_data(station)
+    st.dataframe(df_station_data, use_container_width=True)
