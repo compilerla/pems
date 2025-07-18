@@ -9,37 +9,9 @@ dependencies = [
     "psycopg[binary,pool]==3.2.9",
 ]
 
-[project.optional-dependencies]
-dev = [
-    "black",
-    "cfn-lint",
-    "djlint",
-    "flake8",
-    "pre-commit",
-    "setuptools_scm>=8",
-]
-
-test = ["coverage", "pytest", "pytest-django", "pytest-mock", "pytest-socket"]
-
-[project.urls]
-Code = "https://github.com/compilerla/pems"
-Homepage = "https://compilerla.github.io/pems/"
-Issues = "https://github.com/compilerla/pems/issues"
-
 [build-system]
 requires = ["setuptools>=75", "setuptools_scm>=8"]
 build-backend = "setuptools.build_meta"
-
-[tool.black]
-line-length = 127
-target-version = ["py312"]
-include = '\.pyi?$'
-
-[tool.coverage.run]
-branch = true
-relative_files = true
-source = ["pems", "streamlit_app"]
-omit = ["streamlit_app/apps/*"]
 
 [tool.djlint]
 ignore = "H006,H017,H031"
@@ -49,9 +21,6 @@ max_line_length = 127
 profile = "django"
 preserve_blank_lines = true
 use_gitignore = true
-
-[tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE = "tests.pytest.settings"
 
 [tool.setuptools.packages.find]
 where = ["src"]
