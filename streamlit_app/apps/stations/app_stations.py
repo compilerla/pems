@@ -81,21 +81,27 @@ def load_station_data(station_id: str) -> pd.DataFrame:
 
 # --- STREAMLIT APP ---
 
-query_params = st.query_params
-district_number = query_params.get("district_number", "")
 
-df_station_metadata = load_station_metadata(district_number)
-st.dataframe(df_station_metadata, use_container_width=True)
+def main():
+    query_params = st.query_params
+    district_number = query_params.get("district_number", "")
 
-station = st.selectbox(
-    "Station",
-    df_station_metadata["STATION_ID"],
-)
+    df_station_metadata = load_station_metadata(district_number)
+    st.dataframe(df_station_metadata, use_container_width=True)
 
-days = st.multiselect("Days", get_available_days())
+    station = st.selectbox(
+        "Station",
+        df_station_metadata["STATION_ID"],
+    )
 
-station_data_button = st.button("Load Station Data", type="primary")
+    days = st.multiselect("Days", get_available_days())
 
-if station_data_button:
-    df_station_data = load_station_data(station)
-    st.dataframe(df_station_data, use_container_width=True)
+    station_data_button = st.button("Load Station Data", type="primary")
+
+    if station_data_button:
+        df_station_data = load_station_data(station)
+        st.dataframe(df_station_data, use_container_width=True)
+
+
+if __name__ == "__main__":
+    main()
