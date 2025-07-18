@@ -147,12 +147,26 @@ cp .env.sample .env
 
 Feel free to inspect the environment file, but leave the defaults for now.
 
+## Run the build script
+
+This builds the runtime and devcontainer images:
+
+```shell
+bin/build.sh
+```
+
 ## Run the application
 
 Start the application service with Compose:
 
 ```shell
 docker compose up -d web
+```
+
+Start the streamlit application with Compose:
+
+```shell
+docker compose up streamlit
 ```
 
 The `-d` flag starts the service in "detatched" mode, so your terminal is still available for additional commands. Without this flag, your terminal attaches to the service container's standard output.
@@ -184,7 +198,7 @@ If you don't see this notification, or if you dismissed it, use the VS Code Quic
 
 The VS Code window will reload into the devcontainer.
 
-Once loaded, hit `F5` to start the application in debug mode. The application is now running on `http://localhost:8000`.
+Once loaded, hit `F5` to start the application in debug mode. The application is now running on `http://localhost:8001`.
 
 ## Explore the devcontainer
 
