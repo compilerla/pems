@@ -16,6 +16,8 @@ def _filter_empty(ls):
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+# The working directory at runtime
+RUNTIME_DIR = Path(os.environ.get("RUNTIME_DIR", BASE_DIR))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "secret")
@@ -110,7 +112,7 @@ WSGI_APPLICATION = "pems_web.wsgi.application"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 sslmode = os.environ.get("POSTGRES_SSLMODE", "verify-full")
-sslrootcert = os.path.join(BASE_DIR, "certs", "aws_global_postgres_ca_bundle.pem") if sslmode == "verify-full" else None
+sslrootcert = os.path.join(RUNTIME_DIR, "certs", "aws_global_postgres_ca_bundle.pem") if sslmode == "verify-full" else None
 
 DATABASES = {
     "default": {
@@ -169,7 +171,7 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "pems_web", "static")]
+STATICFILES_DIRS = [os.path.join(RUNTIME_DIR, "pems_web", "src", "pems_web", "static")]
 
 # use Manifest Static Files Storage by default
 STORAGES = {
@@ -183,7 +185,7 @@ STORAGES = {
     },
 }
 
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_ROOT = os.path.join(RUNTIME_DIR, "static")
 
 
 # Default primary key field type
