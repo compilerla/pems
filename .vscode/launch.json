@@ -33,7 +33,7 @@
       "type": "debugpy",
       "request": "launch",
       "module": "streamlit",
-      "args": ["run", "streamlit_app/main.py"],
+      "args": ["run", "pems_streamlit/src/pems_streamlit/main.py"],
       "env": {
         "PYTHONBUFFERED": "1",
         "PYTHONWARNINGS": "default",
@@ -45,7 +45,7 @@
       "type": "debugpy",
       "request": "launch",
       "module": "streamlit",
-      "args": ["run", "streamlit_app/main.py"],
+      "args": ["run", "pems_streamlit/src/pems_streamlit/main.py"],
       "env": {
         "PYTHONBUFFERED": "1",
         "PYTHONWARNINGS": "default",

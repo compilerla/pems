@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 from streamlit.navigation.page import StreamlitPage
 
-from streamlit_app import utils
+from pems_streamlit import utils
 
 
 @pytest.fixture
@@ -25,7 +25,7 @@ def app_paths(test_apps_path):
 
 
 def test_convert_to_pages(mocker, app_paths):
-    page_factory = mocker.patch("streamlit_app.utils._make_app_page", return_value="page")
+    page_factory = mocker.patch("pems_streamlit.utils._make_app_page", return_value="page")
 
     pages = utils._convert_to_pages(app_paths)
 
@@ -67,8 +67,8 @@ def test_make_app_page(app_paths):
 
 
 def test_discover_apps(mocker):
-    mock_discover = mocker.patch("streamlit_app.utils._discover_apps", return_value=[])
-    mock_convert = mocker.patch("streamlit_app.utils._convert_to_pages", return_value=[])
+    mock_discover = mocker.patch("pems_streamlit.utils._discover_apps", return_value=[])
+    mock_convert = mocker.patch("pems_streamlit.utils._convert_to_pages", return_value=[])
 
     result = utils.discover_apps()
 
