@@ -9,7 +9,10 @@ classifiers = ["Programming Language :: Python :: 3 :: Only"]
 requires-python = ">=3.12"
 maintainers = [{ name = "Compiler LLC", email = "dev@compiler.la" }]
 # Link all the local packages so they are installed together
-dependencies = ["pems_web @ file:./pems_web"]
+dependencies = [
+    "pems_streamlit @ file:./pems_streamlit",
+    "pems_web @ file:./pems_web",
+]
 
 [project.optional-dependencies]
 dev = [
