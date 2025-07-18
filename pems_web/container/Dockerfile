@@ -2,27 +2,27 @@ ARG PYTHON_VERSION=3.12
 
 # multi-stage build
 #
-# stage 1: builds the pems package from source
+# stage 1: builds the package wheel from source
 #          using the git metadata for version info
 FROM python:${PYTHON_VERSION} AS build_wheel
 WORKDIR /build
 
-# upgrade pip
-RUN python -m pip install --upgrade pip && \
-    pip install build
+# upgrade pip, install build dependencies
+RUN python -m pip install --upgrade pip build setuptools_scm
 
 # copy source files
-COPY pems_web/pyproject.toml .
-COPY pems_web/src ./src
-COPY .git .git
+COPY . .
 RUN git config --global --add safe.directory /build
+
+# Move into directory to run the build
+WORKDIR /build/pems_web
 
 # build package
 RUN python -m build
 
 # multi-stage build
 #
-# stage 2: installs the pems package in a fresh base container
+# stage 2: installs the wheel in a fresh base container
 #          using the pre-built package, and copying only needed source
 FROM python:${PYTHON_VERSION} AS app_container
 
@@ -48,7 +48,6 @@ RUN useradd --create-home --shell /bin/bash $USER && \
     # setup directories and permissions for gunicorn, (eventual) app
     mkdir -p /$USER/app && \
     mkdir -p /$USER/run && \
-    chown -R $USER:$USER /$USER && \
     # install server components
     apt-get update && \
     apt-get install -qq --no-install-recommends build-essential nginx gettext && \
@@ -74,7 +73,20 @@ RUN HOST_ARCH=$(uname -m) && \
 # enter source directory
 WORKDIR /$USER
 
-COPY LICENSE app/LICENSE
+# copy runtime files
+COPY LICENSE LICENSE
+COPY pems_web/container/gunicorn.conf.py run/gunicorn.conf.py
+COPY pems_web/container/nginx.conf /etc/nginx/nginx.conf
+
+WORKDIR /$USER/app
+
+COPY pems_web/container/certs/aws_global_postgres_ca_bundle.pem certs/aws_global_postgres_ca_bundle.pem
+COPY manage.py manage.py
+COPY bin bin
+COPY pems_web/src/pems_web/local_fixtures.json pems_web/src/pems_web/local_fixtures.json
+COPY --from=build_wheel /build/pems_web/dist /wheels
+
+RUN chown -R $USER:$USER /$USER
 
 # switch to non-root $USER
 USER $USER
@@ -84,28 +96,11 @@ USER $USER
 # since all `pip install` commands are in the context of $USER
 # $PYTHONUSERBASE is the location used by default
 ENV PATH="$PATH:/$USER/.local/bin" \
-    PYTHONUSERBASE="/$USER/.local"
+    PYTHONUSERBASE="/$USER/.local" \
+    GUNICORN_CONF="/$USER/run/gunicorn.conf.py"
 
-# copy gunicorn config file
-COPY pems_web/container/gunicorn.conf.py run/gunicorn.conf.py
-ENV GUNICORN_CONF "/$USER/run/gunicorn.conf.py"
-
-# overwrite default nginx.conf
-COPY pems_web/container/nginx.conf /etc/nginx/nginx.conf
-
-# copy certs for PostgreSQL verify-full
-COPY pems_web/container/certs/aws_global_postgres_ca_bundle.pem app/certs/aws_global_postgres_ca_bundle.pem
-
-WORKDIR /$USER/app
-
-# copy runtime files
-COPY --from=build_wheel /build/dist /build/dist
-COPY manage.py manage.py
-COPY bin bin
-COPY pems_web pems_web
-
-# install source as a package
-RUN pip install $(find /build/dist -name pems_web*.whl)
+# install package wheel
+RUN pip install $(find /wheels -name pems_web*.whl)
 
 # configure container executable
 ENTRYPOINT ["/bin/bash"]
