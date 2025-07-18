@@ -29,6 +29,8 @@ FROM python:${PYTHON_VERSION} AS app_container
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     USER=caltrans
+ENV RUNTIME_DIR="/${USER}/app"
+ENV STATIC_DIR="${RUNTIME_DIR}/pems_web/src/pems_web/static"
 
 EXPOSE 8000
 
@@ -78,12 +80,13 @@ COPY LICENSE LICENSE
 COPY pems_web/container/gunicorn.conf.py run/gunicorn.conf.py
 COPY pems_web/container/nginx.conf /etc/nginx/nginx.conf
 
-WORKDIR /$USER/app
+WORKDIR $RUNTIME_DIR
 
 COPY pems_web/container/certs/aws_global_postgres_ca_bundle.pem certs/aws_global_postgres_ca_bundle.pem
 COPY manage.py manage.py
 COPY bin bin
 COPY pems_web/src/pems_web/local_fixtures.json pems_web/src/pems_web/local_fixtures.json
+COPY pems_web/src/pems_web/static $STATIC_DIR
 COPY --from=build_wheel /build/pems_web/dist /wheels
 
 RUN chown -R $USER:$USER /$USER
