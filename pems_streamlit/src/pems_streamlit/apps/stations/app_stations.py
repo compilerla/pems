@@ -1,9 +1,8 @@
+import os
 from pathlib import Path
 
-import os
 import pandas as pd
 import streamlit as st
-
 
 APP_DIR = Path(__file__).parent
 
