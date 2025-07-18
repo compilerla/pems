@@ -1,0 +1,60 @@
+[project]
+# dummy root package for devcontainer
+name = "pems"
+dynamic = ["version"]
+description = "Caltrans Performance Measurement System (PeMS) is an application that enables access to traffic data collected by sensors that span the freeway system across all major metropolitan areas of the State of California."
+readme = "README.md"
+license-files = ["LICENSE"]
+classifiers = ["Programming Language :: Python :: 3 :: Only"]
+requires-python = ">=3.12"
+maintainers = [{ name = "Compiler LLC", email = "dev@compiler.la" }]
+# Link all the local packages so they are installed together
+dependencies = ["pems_web @ file:./pems_web"]
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "cfn-lint",
+    "djlint",
+    "flake8",
+    "pre-commit",
+    "setuptools_scm>=8",
+]
+
+test = ["coverage", "pytest", "pytest-django", "pytest-mock", "pytest-socket"]
+
+[project.urls]
+Code = "https://github.com/compilerla/pems"
+Homepage = "https://compilerla.github.io/pems/"
+Issues = "https://github.com/compilerla/pems/issues"
+
+[tool.setuptools]
+# Explicitly declare that this "workspace" package contains no Python modules.
+# This disables auto-discovery that causes errors.
+py-modules = []
+
+[tool.black]
+line-length = 127
+target-version = ["py312"]
+include = '\.pyi?$'
+
+[tool.coverage.run]
+branch = true
+relative_files = true
+source = ["pems_web", "streamlit_app"]
+omit = ["streamlit_app/apps/*"]
+
+[tool.djlint]
+ignore = "H006,H017,H031"
+indent = 2
+max_attribute_length = 127
+max_line_length = 127
+profile = "django"
+preserve_blank_lines = true
+use_gitignore = true
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "tests.pytest.settings"
+
+[tool.setuptools_scm]
+# intentionally left blank, but we need the section header to activate the tool
