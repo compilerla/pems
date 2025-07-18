@@ -69,13 +69,11 @@ services:
   streamlit:
     build:
       context: .
-      dockerfile: streamlit_app/Dockerfile
+      dockerfile: pems_streamlit/container/Dockerfile
     image: caltrans/pems:streamlit
     env_file: .env
     ports:
       - "${STREAMLIT_LOCAL_PORT:-8501}:8501"
-    volumes:
-      - ./:/caltrans/app
 
 volumes:
   pgdata:
