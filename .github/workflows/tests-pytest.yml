@@ -26,7 +26,6 @@ jobs:
       - name: Install Python dependencies
         run: |
           pip install -e .[test]
-          pip install -r streamlit_app/requirements.txt
 
       - name: Run tests
         run: ./tests/pytest/run.sh
