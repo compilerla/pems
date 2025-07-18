@@ -24,21 +24,11 @@ jobs:
           cache: pip
           cache-dependency-path: "**/pyproject.toml"
 
-      - name: Write python packages to file
-        run: |
-          python -m venv .venv
-          source .venv/bin/activate
-          pip install pipdeptree
-          pip install -e .
-          mkdir -p pems/static
-          pipdeptree
-          pipdeptree >> pems/static/requirements.txt
-
       - name: Write commit SHA to file
-        run: echo "${{ github.sha }}" >> pems/static/sha.txt
+        run: echo "${{ github.sha }}" >> pems_web/src/pems_web/static/sha.txt
 
       - name: Write tag to file
-        run: echo "${{ github.ref_name }}" >> pems/static/version.txt
+        run: echo "${{ github.ref_name }}" >> pems_web/src/pems_web/static/version.txt
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4

@@ -53,7 +53,7 @@ RUN useradd --create-home --shell /bin/bash $USER && \
     # install server components
     apt-get update && \
     apt-get install -qq --no-install-recommends build-essential nginx gettext && \
-    python -m pip install --upgrade pip
+    python -m pip install --upgrade pip pipdeptree
 
 # install AWS CLI (requires root permissions)
 # download AWS CLI to /tmp to avoid write error (23) from curl command
@@ -103,7 +103,9 @@ ENV PATH="$PATH:/$USER/.local/bin" \
     GUNICORN_CONF="/$USER/run/gunicorn.conf.py"
 
 # install package wheel
-RUN pip install $(find /wheels -name pems_web*.whl)
+RUN pip install $(find /wheels -name pems_web*.whl) \
+# write static requirements file
+    && pipdeptree >> $STATIC_DIR/requirements.txt
 
 # configure container executable
 ENTRYPOINT ["/bin/bash"]
