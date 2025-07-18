@@ -55,6 +55,5 @@ use_gitignore = true
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "tests.pytest.pems_web.settings"
-
-[tool.setuptools_scm]
-# intentionally left blank, but we need the section header to activate the tool
+# Explicitly add src directories to pytest's python path.
+pythonpath = ["pems_web/src"]
