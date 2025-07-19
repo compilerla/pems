@@ -42,7 +42,7 @@ include = '\.pyi?$'
 [tool.coverage.run]
 branch = true
 relative_files = true
-source = ["pems_streamlit", "pems_web"]
+source = ["pems_data", "pems_streamlit", "pems_web"]
 omit = ["pems_streamlit/src/pems_streamlit/apps/*"]
 
 [tool.djlint]
@@ -57,4 +57,4 @@ use_gitignore = true
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "tests.pytest.pems_web.settings"
 # Explicitly add src directories to pytest's python path.
-pythonpath = ["pems_streamlit/src", "pems_web/src"]
+pythonpath = ["pems_data/src", "pems_streamlit/src", "pems_web/src"]

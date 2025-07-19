@@ -55,4 +55,6 @@ RUN pip install .[dev,test]
 RUN pip install --no-cache-dir -r docs/requirements.txt
 
 # install source packages as editable
-RUN pip install -e ./pems_streamlit -e ./pems_web
+# install pems_data separately, and last, to ensure it installs in editable mode
+# and not as a normal package from the dependencies declared in the other packages
+RUN pip install -e ./pems_streamlit -e ./pems_web && pip install -e ./pems_data
