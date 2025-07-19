@@ -1,5 +1,6 @@
 import pytest
-from streamlit_app import main
+
+from pems_streamlit import main
 
 
 @pytest.mark.parametrize(
@@ -19,8 +20,8 @@ def test_main(mocker, monkeypatch, nav_option, expected_nav):
     else:
         monkeypatch.delenv(nav_key, False)
 
-    mock_discover = mocker.patch("streamlit_app.main.discover_apps", return_value=apps)
-    mock_navigate = mocker.patch("streamlit_app.main.st.navigation")
+    mock_discover = mocker.patch("pems_streamlit.main.discover_apps", return_value=apps)
+    mock_navigate = mocker.patch("pems_streamlit.main.st.navigation")
 
     main.main()
 

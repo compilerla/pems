@@ -9,7 +9,10 @@ classifiers = ["Programming Language :: Python :: 3 :: Only"]
 requires-python = ">=3.12"
 maintainers = [{ name = "Compiler LLC", email = "dev@compiler.la" }]
 # Link all the local packages so they are installed together
-dependencies = ["pems_web @ file:./pems_web"]
+dependencies = [
+    "pems_streamlit @ file:./pems_streamlit",
+    "pems_web @ file:./pems_web",
+]
 
 [project.optional-dependencies]
 dev = [
@@ -41,8 +44,8 @@ include = '\.pyi?$'
 [tool.coverage.run]
 branch = true
 relative_files = true
-source = ["pems_web", "streamlit_app"]
-omit = ["streamlit_app/apps/*"]
+source = ["pems_web", "pems_streamlit"]
+omit = ["pems_streamlit/src/pems_streamlit/apps/*"]
 
 [tool.djlint]
 ignore = "H006,H017,H031"
@@ -56,4 +59,4 @@ use_gitignore = true
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "tests.pytest.pems_web.settings"
 # Explicitly add src directories to pytest's python path.
-pythonpath = ["pems_web/src"]
+pythonpath = ["pems_web/src", "pems_streamlit/src"]
