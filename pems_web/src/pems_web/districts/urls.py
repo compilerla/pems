@@ -4,7 +4,7 @@ URLConf for the districts app.
 
 from django.urls import path, re_path
 
-from pems.districts import views
+from pems_web.districts import views
 
 app_name = "districts"
 urlpatterns = [

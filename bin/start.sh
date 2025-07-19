@@ -11,4 +11,4 @@ nginx
 
 # start the application server
 
-python -m gunicorn -c $GUNICORN_CONF pems.wsgi
+python -m gunicorn -c $GUNICORN_CONF pems_web.wsgi
