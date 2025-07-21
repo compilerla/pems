@@ -1,0 +1,38 @@
+Parameters:
+  App:
+    Type: String
+    Description: Your application's name.
+  Env:
+    Type: String
+    Description: The environment name your service, job, or workflow is being deployed to.
+  Name:
+    Type: String
+    Description: Your workload's name.
+  TaskRole:
+    Type: String
+    Description: The ARN of the task role.
+
+Resources:
+  S3martsBucketAccessPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: s3martsBucketPolicy
+      # Attach this policy to the TaskRole provided by Copilot.
+      Roles:
+        - !Ref TaskRole
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: S3ObjectActions
+            Effect: Allow
+            Action: s3:GetObject
+            Resource: "arn:aws:s3:::caltrans-pems-prd-us-west-2-marts/*"
+          - Sid: S3ListAction
+            Effect: Allow
+            Action: s3:ListBucket
+            Resource: "arn:aws:s3:::caltrans-pems-prd-us-west-2-marts"
+
+Outputs:
+  S3martsAccessPolicyArn:
+    Description: "The ARN of the S3 marts access policy"
+    Value: !Ref S3martsBucketAccessPolicy
