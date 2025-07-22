@@ -5,6 +5,8 @@ import streamlit as st
 
 from pems_data import ServiceFactory
 
+from pems_streamlit.components.map_station_summary import map_station_summary
+
 FACTORY = ServiceFactory()
 STATIONS = FACTORY.stations_service()
 S3 = FACTORY.s3_source
@@ -47,12 +49,17 @@ def main():
     district_number = query_params.get("district_number", "")
 
     df_station_metadata = load_station_metadata(district_number)
-    st.dataframe(df_station_metadata, use_container_width=True)
+
+    map_placeholder = st.empty()
 
     station = st.selectbox(
         "Station",
         df_station_metadata["STATION_ID"],
     )
+
+    with map_placeholder:
+        df_selected_station = df_station_metadata.query("STATION_ID == @station")
+        map_station_summary(df_selected_station)
 
     days = st.multiselect("Days", get_available_days())
 
