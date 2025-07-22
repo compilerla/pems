@@ -1,2 +1,5 @@
 # default to pems-admin team
 * @compilerla/pems-admin
+
+# pems team can approve docs
+docs/* @compilerla/pems
