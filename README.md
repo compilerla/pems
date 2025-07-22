@@ -2,33 +2,29 @@
 
 [Full report](https://htmlpreview.github.io/?https://github.com/compilerla/pems/blob/python-coverage-comment-action-data/htmlcov/index.html)
 
-| Name                                          |    Stmts |     Miss |   Branch |   BrPart |   Cover |   Missing |
-|---------------------------------------------- | -------: | -------: | -------: | -------: | ------: | --------: |
-| pems/\_\_init\_\_.py                          |        5 |        2 |        0 |        0 |     60% |       5-7 |
-| pems/clearinghouse/\_\_init\_\_.py            |        0 |        0 |        0 |        0 |    100% |           |
-| pems/clearinghouse/apps.py                    |        4 |        0 |        0 |        0 |    100% |           |
-| pems/core/\_\_init\_\_.py                     |        0 |        0 |        0 |        0 |    100% |           |
-| pems/core/context\_processors.py              |        6 |        1 |        0 |        0 |     83% |        12 |
-| pems/core/management/\_\_init\_\_.py          |        0 |        0 |        0 |        0 |    100% |           |
-| pems/core/management/commands/\_\_init\_\_.py |        0 |        0 |        0 |        0 |    100% |           |
-| pems/core/management/commands/ensure\_db.py   |      181 |        4 |       42 |        4 |     96% |73, 87-89, 99, 103->exit, 230->232, 300->304 |
-| pems/core/middleware.py                       |        9 |        1 |        2 |        1 |     82% |        19 |
-| pems/core/urls.py                             |        4 |        4 |        0 |        0 |      0% |       1-7 |
-| pems/districts/\_\_init\_\_.py                |        0 |        0 |        0 |        0 |    100% |           |
-| pems/districts/admin.py                       |        3 |        0 |        0 |        0 |    100% |           |
-| pems/districts/apps.py                        |        3 |        0 |        0 |        0 |    100% |           |
-| pems/districts/migrations/0001\_initial.py    |        5 |        0 |        0 |        0 |    100% |           |
-| pems/districts/migrations/\_\_init\_\_.py     |        0 |        0 |        0 |        0 |    100% |           |
-| pems/districts/models.py                      |        7 |        0 |        0 |        0 |    100% |           |
-| pems/districts/urls.py                        |        4 |        4 |        0 |        0 |      0% |      5-10 |
-| pems/districts/views.py                       |       17 |        0 |        0 |        0 |    100% |           |
-| pems/settings.py                              |       53 |        2 |        6 |        1 |     95% |   127-128 |
-| pems/urls.py                                  |        3 |        3 |        0 |        0 |      0% |       1-4 |
-| pems/wsgi.py                                  |        4 |        4 |        0 |        0 |      0% |     10-16 |
-| streamlit\_app/\_\_init\_\_.py                |        0 |        0 |        0 |        0 |    100% |           |
-| streamlit\_app/main.py                        |       16 |        0 |        2 |        0 |    100% |           |
-| streamlit\_app/utils.py                       |       35 |        0 |        4 |        0 |    100% |           |
-|                                     **TOTAL** |  **359** |   **25** |   **56** |    **6** | **93%** |           |
+| Name                                                             |    Stmts |     Miss |   Branch |   BrPart |   Cover |   Missing |
+|----------------------------------------------------------------- | -------: | -------: | -------: | -------: | ------: | --------: |
+| pems\_web/src/pems\_web/\_\_init\_\_.py                          |        5 |        2 |        0 |        0 |     60% |       5-7 |
+| pems\_web/src/pems\_web/clearinghouse/\_\_init\_\_.py            |        0 |        0 |        0 |        0 |    100% |           |
+| pems\_web/src/pems\_web/clearinghouse/apps.py                    |        4 |        0 |        0 |        0 |    100% |           |
+| pems\_web/src/pems\_web/core/\_\_init\_\_.py                     |        0 |        0 |        0 |        0 |    100% |           |
+| pems\_web/src/pems\_web/core/context\_processors.py              |        6 |        1 |        0 |        0 |     83% |        13 |
+| pems\_web/src/pems\_web/core/management/\_\_init\_\_.py          |        0 |        0 |        0 |        0 |    100% |           |
+| pems\_web/src/pems\_web/core/management/commands/\_\_init\_\_.py |        0 |        0 |        0 |        0 |    100% |           |
+| pems\_web/src/pems\_web/core/management/commands/ensure\_db.py   |      181 |        4 |       42 |        4 |     96% |73, 87-89, 99, 103->exit, 230->232, 300->304 |
+| pems\_web/src/pems\_web/core/middleware.py                       |        9 |        1 |        2 |        1 |     82% |        19 |
+| pems\_web/src/pems\_web/districts/\_\_init\_\_.py                |        0 |        0 |        0 |        0 |    100% |           |
+| pems\_web/src/pems\_web/districts/admin.py                       |        3 |        0 |        0 |        0 |    100% |           |
+| pems\_web/src/pems\_web/districts/apps.py                        |        3 |        0 |        0 |        0 |    100% |           |
+| pems\_web/src/pems\_web/districts/migrations/0001\_initial.py    |        5 |        0 |        0 |        0 |    100% |           |
+| pems\_web/src/pems\_web/districts/migrations/\_\_init\_\_.py     |        0 |        0 |        0 |        0 |    100% |           |
+| pems\_web/src/pems\_web/districts/models.py                      |        7 |        0 |        0 |        0 |    100% |           |
+| pems\_web/src/pems\_web/districts/views.py                       |       17 |        0 |        0 |        0 |    100% |           |
+| pems\_web/src/pems\_web/settings.py                              |       54 |        2 |        6 |        1 |     95% |   129-130 |
+| streamlit\_app/\_\_init\_\_.py                                   |        0 |        0 |        0 |        0 |    100% |           |
+| streamlit\_app/main.py                                           |       16 |        0 |        2 |        0 |    100% |           |
+| streamlit\_app/utils.py                                          |       35 |        0 |        4 |        0 |    100% |           |
+|                                                        **TOTAL** |  **345** |   **10** |   **56** |    **6** | **96%** |           |
 
 
 ## Setup coverage badge
