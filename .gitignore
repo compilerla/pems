@@ -5,7 +5,7 @@
 *.tmp
 *.egg-info
 static/
-!pems/static
+!pems_web/src/pems_web/static
 __pycache__/
 .coverage
 .DS_Store

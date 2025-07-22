@@ -1,0 +1,32 @@
+[project]
+name = "pems_web"
+description = "The main Django application for the PeMS project."
+dynamic = ["version"]
+requires-python = ">=3.12"
+dependencies = [
+    "Django==5.2.3",
+    "gunicorn==23.0.0",
+    "psycopg[binary,pool]==3.2.9",
+]
+
+[build-system]
+requires = ["setuptools>=75", "setuptools_scm>=8"]
+build-backend = "setuptools.build_meta"
+
+[tool.djlint]
+ignore = "H006,H017,H031"
+indent = 2
+max_attribute_length = 127
+max_line_length = 127
+profile = "django"
+preserve_blank_lines = true
+use_gitignore = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["pems_web*"]
+namespaces = false
+
+[tool.setuptools_scm]
+# Tell scm to look one directory up for the .git folder
+root = ".."

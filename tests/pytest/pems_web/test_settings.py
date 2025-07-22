@@ -1,7 +1,7 @@
 import json
-
-from pems.settings import set_aws_db_credentials
 import os
+
+from pems_web.settings import set_aws_db_credentials
 
 
 def test_runtime_environment_default(settings):
@@ -19,7 +19,13 @@ def test_runtime_environment_dev(settings):
 
 
 def test_set_aws_db_credentials(monkeypatch):
-    creds = {"host": "db.example.com", "port": 5432, "dbname": "mydb", "username": "user", "password": "pass"}
+    creds = {
+        "host": "db.example.com",
+        "port": 5432,
+        "dbname": "mydb",
+        "username": "user",
+        "password": "pass",
+    }
     monkeypatch.setenv("POSTGRES_SECRET", json.dumps(creds))
     set_aws_db_credentials()
 

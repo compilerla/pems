@@ -3,15 +3,15 @@
 import os
 import sys
 
-from pems import __version__ as VERSION
+from pems_web import __version__ as VERSION
 
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "pems.settings")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "pems_web.settings")
 
     if len(sys.argv) == 2 and sys.argv[1] == "--version" or sys.argv[1] == "-v":
-        print(f"pems, {VERSION}")
+        print(f"pems_web, {VERSION}")
         return
 
     try:

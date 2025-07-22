@@ -2,8 +2,9 @@
 The core application: context processors for enriching request context data.
 """
 
-from pems import __version__
 from django.conf import settings
+
+from pems_web import __version__
 
 
 def pems_version(request):

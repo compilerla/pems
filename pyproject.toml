@@ -1,17 +1,15 @@
 [project]
+# dummy root package for devcontainer
 name = "pems"
 dynamic = ["version"]
 description = "Caltrans Performance Measurement System (PeMS) is an application that enables access to traffic data collected by sensors that span the freeway system across all major metropolitan areas of the State of California."
 readme = "README.md"
-license = { file = "LICENSE" }
+license-files = ["LICENSE"]
 classifiers = ["Programming Language :: Python :: 3 :: Only"]
 requires-python = ">=3.12"
 maintainers = [{ name = "Compiler LLC", email = "dev@compiler.la" }]
-dependencies = [
-    "Django==5.2.3",
-    "gunicorn==23.0.0",
-    "psycopg[binary,pool]==3.2.9",
-]
+# Link all the local packages so they are installed together
+dependencies = ["pems_web @ file:./pems_web"]
 
 [project.optional-dependencies]
 dev = [
@@ -30,9 +28,10 @@ Code = "https://github.com/compilerla/pems"
 Homepage = "https://compilerla.github.io/pems/"
 Issues = "https://github.com/compilerla/pems/issues"
 
-[build-system]
-requires = ["setuptools>=75", "setuptools_scm>=8"]
-build-backend = "setuptools.build_meta"
+[tool.setuptools]
+# Explicitly declare that this "workspace" package contains no Python modules.
+# This disables auto-discovery that causes errors.
+py-modules = []
 
 [tool.black]
 line-length = 127
@@ -42,7 +41,7 @@ include = '\.pyi?$'
 [tool.coverage.run]
 branch = true
 relative_files = true
-source = ["pems", "streamlit_app"]
+source = ["pems_web", "streamlit_app"]
 omit = ["streamlit_app/apps/*"]
 
 [tool.djlint]
@@ -55,11 +54,6 @@ preserve_blank_lines = true
 use_gitignore = true
 
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE = "tests.pytest.settings"
-
-[tool.setuptools.packages.find]
-include = ["pems*"]
-namespaces = false
-
-[tool.setuptools_scm]
-# intentionally left blank, but we need the section header to activate the tool
+DJANGO_SETTINGS_MODULE = "tests.pytest.pems_web.settings"
+# Explicitly add src directories to pytest's python path.
+pythonpath = ["pems_web/src"]
