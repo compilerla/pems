@@ -15,6 +15,7 @@ def _convert_to_pages(apps: list[Path]) -> list[StreamlitPage]:
 
 
 def _default_app_page() -> StreamlitPage:
+    """Creates a no-op default page."""
     return st.Page(APP_DIR / "__init__.py", default=True, title="PeMS Streamlit apps")
 
 
@@ -54,5 +55,6 @@ def discover_apps() -> list[StreamlitPage]:
     default_app_page = _default_app_page()
     apps = _discover_apps()
     pages = _convert_to_pages(apps)
+    # Streamlit needs at least one page marked as default
     pages.insert(0, default_app_page)
     return pages
