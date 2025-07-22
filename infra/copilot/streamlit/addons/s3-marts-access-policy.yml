@@ -8,9 +8,6 @@ Parameters:
   Name:
     Type: String
     Description: Your workload's name.
-  TaskRole:
-    Type: String
-    Description: The ARN of the task role.
 
 Resources:
   S3martsBucketAccessPolicy:
@@ -19,7 +16,7 @@ Resources:
       PolicyName: s3martsBucketPolicy
       # Attach this policy to the TaskRole provided by Copilot.
       Roles:
-        - !Ref TaskRole
+        - "pems-dev-streamlit-TaskRole-5Zuwi15thMkN"
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
