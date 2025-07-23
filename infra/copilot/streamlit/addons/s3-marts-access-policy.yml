@@ -11,12 +11,9 @@ Parameters:
 
 Resources:
   S3martsBucketAccessPolicy:
-    Type: AWS::IAM::Policy
+    Type: AWS::IAM::ManagedPolicy
     Properties:
-      PolicyName: s3martsBucketPolicy
-      # Attach this policy to the TaskRole provided by Copilot.
-      Roles:
-        - "pems-dev-streamlit-TaskRole-5Zuwi15thMkN"
+      Description: "Access to S3 marts bucket"
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -30,6 +27,6 @@ Resources:
             Resource: "arn:aws:s3:::caltrans-pems-prd-us-west-2-marts"
 
 Outputs:
-  S3martsAccessPolicyArn:
-    Description: "The ARN of the S3 marts access policy"
+  S3martsBucketAccessPolicyArn:
+    Description: "The ARN of the S3 marts bucket access policy"
     Value: !Ref S3martsBucketAccessPolicy
