@@ -8,11 +8,9 @@ license-files = ["LICENSE"]
 classifiers = ["Programming Language :: Python :: 3 :: Only"]
 requires-python = ">=3.12"
 maintainers = [{ name = "Compiler LLC", email = "dev@compiler.la" }]
-# Link all the local packages so they are installed together
-dependencies = [
-    "pems_streamlit @ file:./pems_streamlit",
-    "pems_web @ file:./pems_web",
-]
+# local packages are installed as part of devcontainer build
+# to ensure they are all installed in editable mode
+dependencies = []
 
 [project.optional-dependencies]
 dev = [
