@@ -1,0 +1,63 @@
+import redis
+import pytest
+
+from pems_data.cache import Cache, redis_connection
+
+
+class TestRedisConnection:
+    @pytest.fixture(autouse=True)
+    def mock_redis(self, mocker):
+        return mocker.patch("redis.Redis")
+
+    def test_redis_connection_default_values(self, mock_redis):
+        redis_connection()
+        mock_redis.assert_called_once_with(host="redis", port=6379)
+
+    def test_redis_connection_custom_values(self, mock_redis, monkeypatch):
+        monkeypatch.setenv("REDIS_HOSTNAME", "custom-host")
+        monkeypatch.setenv("REDIS_PORT", "1234")
+
+        redis_connection()
+        mock_redis.assert_called_once_with(host="custom-host", port=1234)
+
+
+class TestCache:
+    @pytest.fixture
+    def mock_redis_connection(self, mocker):
+        mock_redis = mocker.patch("pems_data.cache.redis_connection")
+        mock_redis.return_value = mocker.Mock(spec=redis.Redis)
+        return mock_redis.return_value
+
+    @pytest.fixture
+    def cache(self, mock_redis_connection):
+        return Cache()
+
+    def test_init_creates_redis_connection(self, mock_redis_connection):
+        cache = Cache()
+        assert cache.r == mock_redis_connection
+
+    def test_is_available_true(self, cache: Cache, mock_redis_connection):
+        mock_redis_connection.ping.return_value = True
+
+        assert cache.is_available() is True
+        mock_redis_connection.ping.assert_called_once()
+
+    def test_is_available_false(self, cache: Cache, mock_redis_connection):
+        mock_redis_connection.ping.return_value = False
+
+        assert cache.is_available() is False
+        mock_redis_connection.ping.assert_called_once()
+
+    def test_get(self, cache: Cache, mock_redis_connection):
+        expected = b"test-value"
+        mock_redis_connection.get.return_value = expected
+
+        result = cache.get("test-key")
+
+        assert result == expected
+        mock_redis_connection.get.assert_called_once_with("test-key")
+
+    def test_set(self, cache: Cache, mock_redis_connection):
+        cache.set("test-key", "test-value")
+
+        mock_redis_connection.set.assert_called_once_with("test-key", "test-value")
