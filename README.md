@@ -4,6 +4,9 @@
 
 | Name                                                             |    Stmts |     Miss |   Branch |   BrPart |   Cover |   Missing |
 |----------------------------------------------------------------- | -------: | -------: | -------: | -------: | ------: | --------: |
+| pems\_streamlit/src/pems\_streamlit/\_\_init\_\_.py              |        0 |        0 |        0 |        0 |    100% |           |
+| pems\_streamlit/src/pems\_streamlit/main.py                      |       16 |        0 |        2 |        0 |    100% |           |
+| pems\_streamlit/src/pems\_streamlit/utils.py                     |       35 |        0 |        4 |        0 |    100% |           |
 | pems\_web/src/pems\_web/\_\_init\_\_.py                          |        5 |        2 |        0 |        0 |     60% |       5-7 |
 | pems\_web/src/pems\_web/clearinghouse/\_\_init\_\_.py            |        0 |        0 |        0 |        0 |    100% |           |
 | pems\_web/src/pems\_web/clearinghouse/apps.py                    |        4 |        0 |        0 |        0 |    100% |           |
@@ -21,9 +24,6 @@
 | pems\_web/src/pems\_web/districts/models.py                      |        7 |        0 |        0 |        0 |    100% |           |
 | pems\_web/src/pems\_web/districts/views.py                       |       17 |        0 |        0 |        0 |    100% |           |
 | pems\_web/src/pems\_web/settings.py                              |       54 |        2 |        6 |        1 |     95% |   129-130 |
-| streamlit\_app/\_\_init\_\_.py                                   |        0 |        0 |        0 |        0 |    100% |           |
-| streamlit\_app/main.py                                           |       16 |        0 |        2 |        0 |    100% |           |
-| streamlit\_app/utils.py                                          |       35 |        0 |        4 |        0 |    100% |           |
 |                                                        **TOTAL** |  **345** |   **10** |   **56** |    **6** | **96%** |           |
 
 
