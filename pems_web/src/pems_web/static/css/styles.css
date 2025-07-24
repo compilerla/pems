@@ -10,3 +10,8 @@ header {
     }
   }
 }
+
+.main-navigation.container-fluid,
+.branding.container-fluid {
+  max-width: 100% !important;
+}
