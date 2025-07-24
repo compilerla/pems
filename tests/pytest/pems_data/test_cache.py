@@ -57,7 +57,23 @@ class TestCache:
         assert result == expected
         mock_redis_connection.get.assert_called_once_with("test-key")
 
+    def test_get_mutate(self, cache: Cache, mock_redis_connection):
+        expected = 2
+        mock_redis_connection.get.return_value = 1
+
+        result = cache.get("test-key", lambda v: v + 1)
+
+        assert result == expected
+        mock_redis_connection.get.assert_called_once_with("test-key")
+
     def test_set(self, cache: Cache, mock_redis_connection):
         cache.set("test-key", "test-value")
 
         mock_redis_connection.set.assert_called_once_with("test-key", "test-value")
+
+    def test_set_mutate(self, cache: Cache, mock_redis_connection):
+        expected = 2
+
+        cache.set("test-key", 1, lambda v: v + 1)
+
+        mock_redis_connection.set.assert_called_once_with("test-key", expected)
