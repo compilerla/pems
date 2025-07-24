@@ -1,13 +1,17 @@
+import logging
 import os
 from typing import Any, Callable
 
 import redis
+
+logger = logging.getLogger(__name__)
 
 
 def redis_connection() -> redis.Redis:
     hostname = os.environ.get("REDIS_HOSTNAME", "redis")
     port = int(os.environ.get("REDIS_PORT", "6379"))
 
+    logger.debug(f"Connecting to redis @ {hostname}:{port}")
     return redis.Redis(host=hostname, port=port)
 
 
@@ -19,7 +23,9 @@ class Cache:
 
     def is_available(self) -> bool:
         """Return a bool indicating if the cache backend is available or not."""
-        return self.r.ping() is True
+        available = self.r.ping() is True
+        logger.debug(f"cache is available: {available}")
+        return available
 
     def get(self, key: str, mutate_func: Callable[[Any], Any] = None) -> Any:
         """Get a raw value from the cache, or None if the key doesn't exist.
@@ -28,8 +34,10 @@ class Cache:
             key (str): The item's cache key.
             mutate_func (callable): If provided, call this on the cached value and return its result.
         """
+        logger.debug(f"read from cache: {key}")
         value = self.r.get(key)
         if value and mutate_func:
+            logger.debug(f"mutating cached value: {key}")
             return mutate_func(value)
         return value
 
@@ -42,5 +50,7 @@ class Cache:
             mutate_func (callable): If provided, call this on the value and insert the result in the cache.
         """
         if mutate_func:
+            logger.debug(f"mutating value for cache: {key}")
             value = mutate_func(value)
+        logger.debug(f"store in cache: {key}")
         self.r.set(key, value)
