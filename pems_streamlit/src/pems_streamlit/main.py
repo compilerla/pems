@@ -1,10 +1,9 @@
 import logging
 import os
 
-
 import streamlit as st
 
-from streamlit_app.utils import discover_apps
+from pems_streamlit.utils import discover_apps
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

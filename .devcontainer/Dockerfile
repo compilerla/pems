@@ -50,10 +50,9 @@ ENV PATH="$PATH:/$USER/.local/bin" \
     PYTHONUSERBASE="/$USER/.local"
 
 # install devcontainer requirements
-RUN pip install -e .[dev,test]
-
+RUN pip install .[dev,test]
 # install docs requirements
 RUN pip install --no-cache-dir -r docs/requirements.txt
 
-# install streamlit requirements
-RUN pip install --no-cache-dir -r streamlit_app/requirements.txt
+# install source packages as editable
+RUN pip install -e ./pems_streamlit -e ./pems_web
