@@ -2,7 +2,10 @@ import logging
 import os
 from typing import Any, Callable
 
+import pandas as pd
 import redis
+
+from pems_data.serialization import arrow_bytes_to_df, df_to_arrow_bytes
 
 logger = logging.getLogger(__name__)
 
@@ -76,6 +79,10 @@ class Cache:
         logger.warning(f"cache unavailable to get: {key}")
         return None
 
+    def get_df(self, key: str) -> pd.DataFrame:
+        """Get a `pandas.DataFrame` from the cache, or None if the key doesn't exist."""
+        return self.get(key, mutate_func=arrow_bytes_to_df)
+
     def set(self, key: str, value: Any, mutate_func: Callable[[Any], Any] = None) -> None:
         """Set a value in the cache.
 
@@ -92,3 +99,7 @@ class Cache:
             self.c.set(key, value)
         else:
             logger.warning(f"cache unavailable to set: {key}")
+
+    def set_df(self, key: str, value: pd.DataFrame) -> None:
+        """Set a `pandas.DataFrame` in the cache."""
+        self.set(key, value, mutate_func=df_to_arrow_bytes)
