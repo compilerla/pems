@@ -54,58 +54,87 @@ class TestRedisConnection:
 
 
 class TestCache:
-    @pytest.fixture
+    @pytest.fixture(autouse=True)
     def mock_redis_connection(self, mocker):
         mock_redis = mocker.patch("pems_data.cache.redis_connection")
         mock_redis.return_value = mocker.Mock(spec=redis.Redis)
         return mock_redis.return_value
 
     @pytest.fixture
-    def cache(self, mock_redis_connection):
+    def cache(self) -> Cache:
         return Cache()
 
-    def test_init_creates_redis_connection(self, mock_redis_connection):
-        cache = Cache()
-        assert cache.r == mock_redis_connection
+    @pytest.fixture
+    def spy_connect(self, cache, mocker):
+        return mocker.spy(cache, "_connect")
 
-    def test_is_available_true(self, cache: Cache, mock_redis_connection):
+    @pytest.fixture(autouse=True)
+    def mock_is_available(self, mock_redis_connection):
+        mock_redis_connection.ping.return_value = True
+
+    def test_init_does_not_create_redis_connection(self, cache: Cache, spy_connect):
+        assert hasattr(cache, "c")
+        assert cache.c is None
+        spy_connect.assert_not_called()
+
+    def test_connect(self, cache: Cache, spy_connect):
+        cache._connect()
+
+        spy_connect.assert_called_once()
+        assert isinstance(cache.c, redis.Redis)
+
+    def test_is_available_true(self, cache: Cache, mock_redis_connection, spy_connect):
         mock_redis_connection.ping.return_value = True
 
         assert cache.is_available() is True
+        spy_connect.assert_called_once()
         mock_redis_connection.ping.assert_called_once()
 
-    def test_is_available_false(self, cache: Cache, mock_redis_connection):
+    def test_is_available_false(self, cache: Cache, mock_redis_connection, spy_connect):
         mock_redis_connection.ping.return_value = False
 
         assert cache.is_available() is False
+        spy_connect.assert_called_once()
         mock_redis_connection.ping.assert_called_once()
 
-    def test_get(self, cache: Cache, mock_redis_connection):
+    def test_get(self, cache: Cache, mock_redis_connection, spy_connect):
         expected = b"test-value"
         mock_redis_connection.get.return_value = expected
 
         result = cache.get("test-key")
 
         assert result == expected
+        spy_connect.assert_called_once()
         mock_redis_connection.get.assert_called_once_with("test-key")
 
-    def test_get_mutate(self, cache: Cache, mock_redis_connection):
+    def test_get_mutate(self, cache: Cache, mock_redis_connection, spy_connect):
         expected = 2
         mock_redis_connection.get.return_value = 1
 
         result = cache.get("test-key", lambda v: v + 1)
 
         assert result == expected
+        spy_connect.assert_called_once()
         mock_redis_connection.get.assert_called_once_with("test-key")
 
-    def test_set(self, cache: Cache, mock_redis_connection):
+    def test_set(self, cache: Cache, mock_redis_connection, spy_connect):
         cache.set("test-key", "test-value")
 
+        spy_connect.assert_called_once()
         mock_redis_connection.set.assert_called_once_with("test-key", "test-value")
 
-    def test_set_mutate(self, cache: Cache, mock_redis_connection):
+    def test_set_mutate(self, cache: Cache, mock_redis_connection, spy_connect):
         expected = 2
 
         cache.set("test-key", 1, lambda v: v + 1)
 
+        spy_connect.assert_called_once()
         mock_redis_connection.set.assert_called_once_with("test-key", expected)
+
+    def test_set__unavailable(self, cache: Cache, mock_redis_connection, spy_connect):
+        mock_redis_connection.ping.return_value = False
+
+        cache.set("test-key", "test-value")
+
+        spy_connect.assert_called_once()
+        mock_redis_connection.set.assert_not_called()

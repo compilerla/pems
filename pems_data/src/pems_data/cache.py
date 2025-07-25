@@ -35,12 +35,27 @@ def redis_connection(host: str = None, port: int = None, **kwargs) -> redis.Redi
 class Cache:
     """Basic caching interface for `pems_data`."""
 
-    def __init__(self):
-        self.r = redis_connection()
+    def __init__(self, host: str = None, port: int = None):
+        """Create a new instance of the Cache interface.
+
+        Args:
+            host (str): (Optional) The hostname of the cache backend.
+            port (int): (Optional) The port to connect on the cache backend.
+        """
+
+        self.host = host
+        self.port = port
+        self.c = None
+
+    def _connect(self):
+        """Establish a connection to the cache backend if necessary."""
+        if not isinstance(self.c, redis.Redis):
+            self.c = redis_connection(self.host, self.port)
 
     def is_available(self) -> bool:
         """Return a bool indicating if the cache backend is available or not."""
-        available = self.r.ping() is True
+        self._connect()
+        available = self.c and self.c.ping() is True
         logger.debug(f"cache is available: {available}")
         return available
 
@@ -51,11 +66,15 @@ class Cache:
             key (str): The item's cache key.
             mutate_func (callable): If provided, call this on the cached value and return its result.
         """
-        logger.debug(f"read from cache: {key}")
-        value = self.r.get(key)
-        if value and mutate_func:
-            return mutate_func(value)
-        return value
+        if self.is_available():
+            logger.debug(f"read from cache: {key}")
+            value = self.c.get(key)
+            if value and mutate_func:
+                logger.debug(f"mutating cached value: {key}")
+                return mutate_func(value)
+            return value
+        logger.warning(f"cache unavailable to get: {key}")
+        return None
 
     def set(self, key: str, value: Any, mutate_func: Callable[[Any], Any] = None) -> None:
         """Set a value in the cache.
@@ -65,7 +84,11 @@ class Cache:
             value (Any): The item's value to store in the cache.
             mutate_func (callable): If provided, call this on the value and insert the result in the cache.
         """
-        if mutate_func:
-            value = mutate_func(value)
-        logger.debug(f"store in cache: {key}")
-        self.r.set(key, value)
+        if self.is_available():
+            if mutate_func:
+                logger.debug(f"mutating value for cache: {key}")
+                value = mutate_func(value)
+            logger.debug(f"store in cache: {key}")
+            self.c.set(key, value)
+        else:
+            logger.warning(f"cache unavailable to set: {key}")
