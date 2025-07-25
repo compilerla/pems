@@ -6,11 +6,6 @@ from pems_data.serialization import arrow_bytes_to_df, df_to_arrow_bytes
 
 
 @pytest.fixture
-def df():
-    return pd.DataFrame({"col1": [1, 2, 3], "col2": ["a", "b", "c"]})
-
-
-@pytest.fixture
 def arrow_bytes(df):
     # convert df to actual arrow bytes for testing
     table = pa.Table.from_pandas(df, preserve_index=False)
