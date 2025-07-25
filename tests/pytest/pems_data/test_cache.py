@@ -108,6 +108,26 @@ class TestCache:
         spy_connect.assert_called_once()
         mock_redis_connection.get.assert_called_once_with("test-key")
 
+    def test_get__cache_unavailable(self, cache: Cache, mock_redis_connection, spy_connect):
+        # simulate cache unavailable
+        mock_redis_connection.ping.return_value = False
+
+        result = cache.get("test-key")
+
+        assert result is None
+        spy_connect.assert_called_once()
+        mock_redis_connection.get.assert_not_called()
+
+    def test_get__key_missing(self, cache: Cache, mock_redis_connection, mocker, spy_connect):
+        # simulate key missing in cache
+        mock_redis_connection.get.return_value = None
+
+        result = cache.get("missing-key")
+
+        spy_connect.assert_called_once()
+        mock_redis_connection.get.assert_called_once_with("missing-key")
+        assert result is None
+
     def test_get__mutate(self, cache: Cache, mock_redis_connection, spy_connect):
         expected = 2
         mock_redis_connection.get.return_value = 1
