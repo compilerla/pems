@@ -7,18 +7,17 @@ ARG PYTHON_VERSION=3.12
 FROM python:${PYTHON_VERSION} AS build_wheel
 WORKDIR /build
 
-# upgrade pip, install build dependencies
-RUN python -m pip install --upgrade pip build setuptools_scm
+# install build tools
+RUN python -m pip install --upgrade pip wheel setuptools_scm
 
 # copy source files
 COPY . .
 RUN git config --global --add safe.directory /build
 
-# Move into directory to run the build
-WORKDIR /build/pems_streamlit
-
-# build package
-RUN python -m build
+# build wheels for local packages AND downloads
+# wheels for all their dependencies from PyPI
+# creating a "wheelhouse"
+RUN pip wheel --wheel-dir /wheels ./pems_data ./pems_streamlit
 
 # multi-stage build
 #
@@ -54,8 +53,11 @@ WORKDIR /$USER/app
 COPY .streamlit .streamlit
 COPY pems_streamlit/container/entrypoint.sh entrypoint.sh
 COPY pems_streamlit/container/run.py run.py
-COPY --from=build_wheel /build/pems_streamlit/dist /wheels
 
-RUN pip install $(find /wheels -name pems_streamlit*.whl)
+# copy the entire, now-complete wheelhouse from the build stage
+COPY --from=build_wheel /wheels /wheels
+
+# install pems_streamlit using only the local wheels directory
+RUN pip install --no-index --find-links=/wheels pems_streamlit
 
 ENTRYPOINT ["./entrypoint.sh"]
