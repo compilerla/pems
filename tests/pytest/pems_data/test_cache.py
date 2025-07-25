@@ -9,16 +9,48 @@ class TestRedisConnection:
     def mock_redis(self, mocker):
         return mocker.patch("redis.Redis")
 
-    def test_redis_connection_default_values(self, mock_redis):
-        redis_connection()
-        mock_redis.assert_called_once_with(host="redis", port=6379)
+    @pytest.fixture
+    def redis_host(self):
+        return "redis"
 
-    def test_redis_connection_custom_values(self, mock_redis, monkeypatch):
+    @pytest.fixture
+    def redis_port(self):
+        return 6379
+
+    def test_redis_connection_default(self, mock_redis, redis_host, redis_port):
+        redis_connection()
+        mock_redis.assert_called_once_with(host=redis_host, port=redis_port)
+
+    def test_redis_connection_parameters(self, mock_redis):
+        redis_connection("custom-host", 1234)
+        mock_redis.assert_called_once_with(host="custom-host", port=1234)
+
+    def test_redis_connection_env_vars(self, mock_redis, monkeypatch):
         monkeypatch.setenv("REDIS_HOSTNAME", "custom-host")
         monkeypatch.setenv("REDIS_PORT", "1234")
 
         redis_connection()
         mock_redis.assert_called_once_with(host="custom-host", port=1234)
+
+    def test_redis_connection_env_vars_and_parameters(self, mock_redis, monkeypatch):
+        monkeypatch.setenv("REDIS_HOSTNAME", "env-host")
+        monkeypatch.setenv("REDIS_PORT", "1234")
+
+        redis_connection("param-host", 5678)
+        mock_redis.assert_called_once_with(host="param-host", port=5678)
+
+    def test_redis_connection_error(self, mock_redis):
+        mock_redis.side_effect = redis.ConnectionError
+
+        result = redis_connection()
+
+        mock_redis.assert_called_once()
+        assert result is None
+
+    def test_redis_connection_extras(self, mock_redis, redis_host, redis_port):
+        redis_connection(extra1="extra1", extra2="extra2")
+
+        mock_redis.assert_called_once_with(host=redis_host, port=redis_port, extra1="extra1", extra2="extra2")
 
 
 class TestCache:

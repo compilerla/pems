@@ -7,12 +7,29 @@ import redis
 logger = logging.getLogger(__name__)
 
 
-def redis_connection() -> redis.Redis:
-    hostname = os.environ.get("REDIS_HOSTNAME", "redis")
-    port = int(os.environ.get("REDIS_PORT", "6379"))
+def redis_connection(host: str = None, port: int = None, **kwargs) -> redis.Redis | None:
+    """Try to create a new connection to a redis backend. Return None if the connection fails.
 
-    logger.debug(f"Connecting to redis @ {hostname}:{port}")
-    return redis.Redis(host=hostname, port=port)
+    Uses the `REDIS_HOSTNAME` and `REDIS_PORT` environment variables as fallback.
+
+    Args:
+        host (str): The redis hostname
+        port (int): The port to connect on
+    """
+
+    host = host or os.environ.get("REDIS_HOSTNAME", "redis")
+    port = int(port or os.environ.get("REDIS_PORT", "6379"))
+
+    logger.debug(f"connecting to redis @ {host}:{port}")
+
+    kwargs["host"] = host
+    kwargs["port"] = port
+
+    try:
+        return redis.Redis(**kwargs)
+    except redis.ConnectionError as ce:
+        logger.error(f"connection failed for redis @ {host}:{port}", exc_info=ce)
+        return None
 
 
 class Cache:
