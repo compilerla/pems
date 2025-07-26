@@ -2,7 +2,7 @@
   "name": "caltrans/pems",
   "dockerComposeFile": ["../compose.yml"],
   "service": "dev",
-  "runServices": ["dev", "pgweb"],
+  "runServices": ["dev", "pgweb", "redis"],
   "forwardPorts": ["docs:8000"],
   "workspaceFolder": "/caltrans/app",
   "postStartCommand": ["/bin/bash", "bin/setup.sh"],
