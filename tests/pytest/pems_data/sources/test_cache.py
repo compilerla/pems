@@ -44,5 +44,5 @@ class TestCachingDataSource:
         result = data_source.read("test-id")
 
         mock_cache.get_df.assert_called_once_with("test-id")
-        mock_cache.set_df.assert_called_once_with("test-id", df)
+        mock_cache.set_df.assert_called_once_with("test-id", df, ttl=None)
         pd.testing.assert_frame_equal(result, df)
