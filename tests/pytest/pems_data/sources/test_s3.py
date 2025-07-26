@@ -12,18 +12,6 @@ class TestS3DataSource:
         return S3DataSource()
 
     @pytest.fixture(autouse=True)
-    def mock_s3(self, mocker):
-        s3 = mocker.patch("boto3.client").return_value
-        s3.list_objects.return_value = {
-            "Contents": [
-                {"Key": "path1/file2.json"},
-                {"Key": "path2/file1.json"},
-                {"Key": "path1/file1.json"},
-            ]
-        }
-        return s3
-
-    @pytest.fixture(autouse=True)
     def mock_read_parquet(self, mocker):
         return mocker.patch("pandas.read_parquet")
 
