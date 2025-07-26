@@ -7,10 +7,6 @@ from pems_data.services.stations import StationsService
 
 class TestStationsService:
     @pytest.fixture
-    def df(self):
-        return pd.DataFrame({"STATION_ID": [1]})
-
-    @pytest.fixture
     def data_source(self, df, mocker):
         mock = mocker.Mock(spec=IDataSource)
         mock.read.return_value = df
@@ -25,6 +21,9 @@ class TestStationsService:
 
     def test_metadata_file(self):
         assert StationsService.metadata_file == "geo/current_stations.parquet"
+
+    def test_build_cache_key(self, service: StationsService):
+        assert service._build_cache_key("arg1", "ARG2", 3) == "stations:arg1:arg2:3"
 
     def test_get_district_metadata(self, service: StationsService, data_source: IDataSource, df):
         district_number = "7"
@@ -50,6 +49,10 @@ class TestStationsService:
         ]
         assert data_source.read.call_args.kwargs["filters"] == [("DISTRICT", "=", district_number)]
 
+        cache_opts = data_source.read.call_args.kwargs["cache_opts"]
+        assert district_number in cache_opts["key"]
+        assert cache_opts["ttl"] == 3600
+
         pd.testing.assert_frame_equal(result, df)
 
     def test_get_imputed_agg_5min(self, service: StationsService, data_source: IDataSource, df):
@@ -68,5 +71,9 @@ class TestStationsService:
             "OCCUPANCY_AVG",
         ]
         assert data_source.read.call_args.kwargs["filters"] == [("STATION_ID", "=", station_id)]
+
+        cache_opts = data_source.read.call_args.kwargs["cache_opts"]
+        assert station_id in cache_opts["key"]
+        assert cache_opts["ttl"] == 300
 
         pd.testing.assert_frame_equal(result, df)
