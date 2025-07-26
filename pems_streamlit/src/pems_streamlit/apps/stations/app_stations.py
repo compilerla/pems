@@ -3,16 +3,17 @@ import re
 import pandas as pd
 import streamlit as st
 
-from pems_data.stations import StationsBucket
+from pems_data.sources.s3 import S3DataSource
+from pems_data.services.stations import StationsService
 
-
-BUCKET = StationsBucket()
+BUCKET = S3DataSource()
+STATIONS = StationsService(data_source=BUCKET)
 
 
 @st.cache_data(ttl=3600)  # Cache for 1 hour
 def load_station_metadata(district_number: str) -> pd.DataFrame:
     """Loads metadata for all stations in the selected District from S3."""
-    return BUCKET.get_district_metadata(district_number)
+    return STATIONS.get_district_metadata(district_number)
 
 
 @st.cache_data(ttl=3600)  # Cache for 1 hour
@@ -27,15 +28,15 @@ def get_available_days() -> set:
     def match(m: re.Match):
         return int(m.group(1))
 
-    return BUCKET.get_prefixes(pattern, initial_prefix=BUCKET.imputation_detector_agg_5min, match_func=match)
+    return BUCKET.get_prefixes(pattern, initial_prefix=STATIONS.imputation_detector_agg_5min, match_func=match)
 
 
-@st.cache_data(ttl=3600)  # Cache for 1 hour
+@st.cache_data(ttl=300)  # Cache for 5 minutes
 def load_station_data(station_id: str) -> pd.DataFrame:
     """
     Loads station data for a specific station.
     """
-    return BUCKET.get_imputed_agg_5min(station_id)
+    return STATIONS.get_imputed_agg_5min(station_id)
 
 
 # --- STREAMLIT APP ---
