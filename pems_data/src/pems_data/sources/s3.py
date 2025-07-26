@@ -1,14 +1,18 @@
+import os
 import re
 
 import boto3
 import pandas as pd
 
+from pems_data.sources import IDataSource
 
-class S3Bucket:
-    prod_marts = "caltrans-pems-prd-us-west-2-marts"
+
+class S3DataSource(IDataSource):
+    default_bucket = os.environ.get("S3_BUCKET_NAME", "caltrans-pems-prd-us-west-2-marts")
 
     def __init__(self, name: str = None):
-        self.name = name or self.prod_marts
+        self.name = name or self.default_bucket
+        self._client = boto3.client("s3")
 
     def get_prefixes(self, filter_pattern: re.Pattern = re.compile(".+"), initial_prefix: str = "", match_func=None) -> list:
         """
@@ -17,8 +21,7 @@ class S3Bucket:
         When a match is found, if match_func exists, add its result to the output list. Otherwise add the entire match.
         """
 
-        s3 = boto3.client("s3")
-        s3_keys = s3.list_objects(Bucket=self.name, Prefix=initial_prefix)
+        s3_keys = self._client.list_objects(Bucket=self.name, Prefix=initial_prefix)
 
         result = set()
 
@@ -33,7 +36,7 @@ class S3Bucket:
 
         return sorted(result)
 
-    def read_parquet(self, *args, path=None, columns=None, filters=None, **kwargs) -> pd.DataFrame:
+    def read(self, *args: str, path=None, columns=None, filters=None, **kwargs) -> pd.DataFrame:
         """Reads data from the S3 path into a pandas DataFrame. Extra kwargs are pass along to `pandas.read_parquet()`.
 
         Args:
