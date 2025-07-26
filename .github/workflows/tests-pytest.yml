@@ -25,7 +25,7 @@ jobs:
 
       - name: Install Python dependencies
         run: |
-          pip install .[test] ./pems_streamlit ./pems_web
+          pip install .[test] ./pems_data ./pems_streamlit ./pems_web
 
       - name: Run tests
         run: ./tests/pytest/run.sh
