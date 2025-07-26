@@ -38,6 +38,11 @@ def redis_connection(host: str = None, port: int = None, **kwargs) -> redis.Redi
 class Cache:
     """Basic caching interface for `pems_data`."""
 
+    @classmethod
+    def build_key(cls, *args) -> str:
+        """Build a cache key from the given parts."""
+        return ":".join([str(a).lower() for a in args])
+
     def __init__(self, host: str = None, port: int = None):
         """Create a new instance of the Cache interface.
 

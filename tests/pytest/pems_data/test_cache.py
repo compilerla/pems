@@ -73,6 +73,9 @@ class TestCache:
     def mock_is_available(self, mock_redis_connection):
         mock_redis_connection.ping.return_value = True
 
+    def test_build_key(self, cache: Cache):
+        assert cache.build_key("one", "TWO", 3) == "one:two:3"
+
     def test_init_does_not_create_redis_connection(self, cache: Cache, spy_connect):
         assert hasattr(cache, "c")
         assert cache.c is None
