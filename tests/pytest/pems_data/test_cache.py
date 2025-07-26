@@ -135,7 +135,7 @@ class TestCache:
         expected = 2
         mock_redis_connection.get.return_value = 1
 
-        result = cache.get("test-key", lambda v: v + 1)
+        result = cache.get("test-key", mutate_func=lambda v: v + 1)
 
         assert result == expected
         spy_connect.assert_called_once()
@@ -145,15 +145,23 @@ class TestCache:
         cache.set("test-key", "test-value")
 
         spy_connect.assert_called_once()
-        mock_redis_connection.set.assert_called_once_with("test-key", "test-value")
+        mock_redis_connection.set.assert_called_once_with("test-key", "test-value", ex=None)
 
     def test_set__mutate(self, cache: Cache, mock_redis_connection, spy_connect):
         expected = 2
 
-        cache.set("test-key", 1, lambda v: v + 1)
+        cache.set("test-key", 1, mutate_func=lambda v: v + 1)
 
         spy_connect.assert_called_once()
-        mock_redis_connection.set.assert_called_once_with("test-key", expected)
+        mock_redis_connection.set.assert_called_once_with("test-key", expected, ex=None)
+
+    def test_set__ttl(self, cache: Cache, mock_redis_connection, spy_connect):
+        ttl = 5
+
+        cache.set("test-key", 1, ttl=ttl)
+
+        spy_connect.assert_called_once()
+        mock_redis_connection.set.assert_called_once_with("test-key", 1, ex=ttl)
 
     def test_set__unavailable(self, cache: Cache, mock_redis_connection, spy_connect):
         mock_redis_connection.ping.return_value = False
@@ -183,10 +191,10 @@ class TestCache:
 
         spy_connect.assert_called_once()
         mock_redis_connection.set.assert_called_once()
-        # Verify first arg is the key
-        assert mock_redis_connection.set.call_args[0][0] == "test-key"
-        # Verify second arg is bytes (arrow serialized)
-        assert isinstance(mock_redis_connection.set.call_args[0][1], bytes)
+        # verify first arg is the key
+        assert mock_redis_connection.set.call_args.args[0] == "test-key"
+        # verify second arg is bytes (arrow serialized)
+        assert isinstance(mock_redis_connection.set.call_args.args[1], bytes)
 
     def test_set_df__empty_df(self, cache: Cache, mock_redis_connection, spy_connect):
         empty_df = pd.DataFrame()
@@ -194,21 +202,29 @@ class TestCache:
 
         spy_connect.assert_called_once()
         mock_redis_connection.set.assert_called_once()
-        # Verify empty DataFrame is handled
+        # verify empty DataFrame is handled
         assert isinstance(mock_redis_connection.set.call_args[0][1], bytes)
 
     def test_set_df__roundtrip(self, cache: Cache, mock_redis_connection, spy_connect, df, mocker):
-        # Setup mock to return the serialized value on get
-        def mock_set(key, value):
+        # setup mock to return the serialized value on get
+        def mock_set(key, value, ex):
             mock_redis_connection.get.return_value = value
 
         mock_redis_connection.set.side_effect = mock_set
 
-        # Set the DataFrame
+        # set the DataFrame
         cache.set_df("test-key", df)
 
-        # Get it back
+        # get it back
         result = cache.get_df("test-key")
 
         pd.testing.assert_frame_equal(result, df)
         spy_connect.assert_has_calls([mocker.call(), mocker.call()])
+
+    def test_set_df__ttl(self, cache: Cache, mock_redis_connection, df):
+        """Test setting a DataFrame in the cache"""
+        ttl = 5
+        cache.set_df("test-key", df, ttl=ttl)
+
+        # verify ttl argument
+        assert mock_redis_connection.set.call_args.kwargs["ex"] == ttl

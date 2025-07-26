@@ -88,12 +88,13 @@ class Cache:
         """Get a `pandas.DataFrame` from the cache, or None if the key doesn't exist."""
         return self.get(key, mutate_func=arrow_bytes_to_df)
 
-    def set(self, key: str, value: Any, mutate_func: Callable[[Any], Any] = None) -> None:
+    def set(self, key: str, value: Any, ttl: int = None, mutate_func: Callable[[Any], Any] = None) -> None:
         """Set a value in the cache.
 
         Args:
             key (str): The item's cache key.
             value (Any): The item's value to store in the cache.
+            ttl (int): Seconds until expiration.
             mutate_func (callable): If provided, call this on the value and insert the result in the cache.
         """
         if self.is_available():
@@ -101,10 +102,10 @@ class Cache:
                 logger.debug(f"mutating value for cache: {key}")
                 value = mutate_func(value)
             logger.debug(f"store in cache: {key}")
-            self.c.set(key, value)
+            self.c.set(key, value, ex=ttl)
         else:
             logger.warning(f"cache unavailable to set: {key}")
 
-    def set_df(self, key: str, value: pd.DataFrame) -> None:
-        """Set a `pandas.DataFrame` in the cache."""
-        self.set(key, value, mutate_func=df_to_arrow_bytes)
+    def set_df(self, key: str, value: pd.DataFrame, ttl: int = None) -> None:
+        """Set a `pandas.DataFrame` in the cache, with an optional TTL (seconds until expiration)."""
+        self.set(key, value, mutate_func=df_to_arrow_bytes, ttl=ttl)
