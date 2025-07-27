@@ -20,6 +20,14 @@ extra:
 plugins:
   - search
   - awesome-pages
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_root_heading: true
+            show_root_toc_entry: false
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
   - redirects:
       redirect_maps:
 
