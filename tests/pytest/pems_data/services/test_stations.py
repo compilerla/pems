@@ -1,8 +1,8 @@
 import pandas as pd
 import pytest
 
-from pems_data.sources import IDataSource
 from pems_data.services.stations import StationsService
+from pems_data.sources import IDataSource
 
 
 class TestStationsService:
@@ -16,11 +16,11 @@ class TestStationsService:
     def service(self, data_source):
         return StationsService(data_source)
 
-    def test_imputation_detector_agg_5min(self):
-        assert StationsService.imputation_detector_agg_5min == "imputation/detector_imputed_agg_five_minutes"
+    def test_imputation_detector_agg_5min(self, service: StationsService):
+        assert service.imputation_detector_agg_5min == "imputation/detector_imputed_agg_five_minutes"
 
-    def test_metadata_file(self):
-        assert StationsService.metadata_file == "geo/current_stations.parquet"
+    def test_metadata_file(self, service: StationsService):
+        assert service.metadata_file == "geo/current_stations.parquet"
 
     def test_build_cache_key(self, service: StationsService):
         assert service._build_cache_key("arg1", "ARG2", 3) == "stations:arg1:arg2:3"
@@ -30,7 +30,7 @@ class TestStationsService:
         result = service.get_district_metadata(district_number)
 
         data_source.read.assert_called_once()
-        assert data_source.read.call_args.args[0] == StationsService.metadata_file
+        assert data_source.read.call_args.args[0] == service.metadata_file
         assert data_source.read.call_args.kwargs["columns"] == [
             "STATION_ID",
             "NAME",
@@ -61,7 +61,7 @@ class TestStationsService:
         result = service.get_imputed_agg_5min(station_id)
 
         data_source.read.assert_called_once()
-        assert data_source.read.call_args.args[0] == StationsService.imputation_detector_agg_5min
+        assert data_source.read.call_args.args[0] == service.imputation_detector_agg_5min
         assert data_source.read.call_args.kwargs["columns"] == [
             "STATION_ID",
             "LANE",
