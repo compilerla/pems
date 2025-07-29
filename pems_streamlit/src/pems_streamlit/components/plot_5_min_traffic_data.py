@@ -1,6 +1,5 @@
 import pandas as pd
 import plotly.graph_objs as go
-import streamlit as st
 
 QUANTITY_CONFIG = {
     "VOLUME_SUM": {"name": "Volume (veh/hr)"},
@@ -69,4 +68,4 @@ def plot_5_min_traffic_data(df_station_data: pd.DataFrame, quantities: list, lan
 
     fig.update_layout(**layout_updates)
 
-    st.plotly_chart(fig, use_container_width=True)
+    return fig

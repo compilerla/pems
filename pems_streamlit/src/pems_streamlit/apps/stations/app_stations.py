@@ -74,6 +74,9 @@ def main():
 
     station_data_button = st.button("Load Station Data", type="primary")
 
+    error_placeholder = st.empty()
+    plot_placeholder = st.empty()
+
     if station_data_button:
         error_messages = []
         if len(quantity) == 0 or len(quantity) > 2:
@@ -84,14 +87,16 @@ def main():
             error_messages.append("- Please select at least one day to proceed.")
         if error_messages:
             full_error_message = "\n".join(error_messages)
-            st.error(full_error_message)
+            error_placeholder.error(full_error_message)
         else:
             df_station_data = load_station_data(station)
             filtered_df = df_station_data[
                 (df_station_data["SAMPLE_TIMESTAMP"].dt.day.isin(days)) & (df_station_data["LANE"].isin(lane))
             ]
             filtered_df_sorted = filtered_df.sort_values(by="SAMPLE_TIMESTAMP")
-            plot_5_min_traffic_data(filtered_df_sorted, quantity, lane)
+
+            fig = plot_5_min_traffic_data(filtered_df_sorted, quantity, lane)
+            plot_placeholder.plotly_chart(fig, use_container_width=True)
 
 
 if __name__ == "__main__":
