@@ -30,13 +30,13 @@ When running locally in the devcontainer, a `redis` service is started by Compos
 
 The library is built around a few core components that work together to provide a simple data access experience.
 
-- `ServiceFactory`: This is the primary entry point for using the library. It is a factory class that instantiates and wires together all the necessary dependencies, such as the data sources and caching clients.
+- [`ServiceFactory`](./reference/service-factory.md): This is the primary entry point for using the library. It is a factory class that instantiates and wires together all the necessary dependencies, such as the data sources and caching clients.
 
-- **Services**: Services offer a high-level API for fetching specific, business-relevant data. For example, the `StationsService` has methods to get all station metadata for a given district or to retrieve 5-minute aggregated data for a specific station.
+- [**Services**](./reference/services.md): Services offer a high-level API for fetching specific, business-relevant data. For example, the `StationsService` has methods to get all station metadata for a given district or to retrieve 5-minute aggregated data for a specific station.
 
-- **Caching layer**: To minimize latency and load on the data source, the library uses a caching decorator by default. When a data request is made, this layer first checks the Redis cache for the requested data. If the data is not found (a cache miss), it retrieves the data from the underlying S3 source and stores it in the cache for future requests.
+- [**Caching layer**](./reference/caching-layer.md): To minimize latency and load on the data source, the library uses a caching decorator by default. When a data request is made, this layer first checks the Redis cache for the requested data. If the data is not found (a cache miss), it retrieves the data from the underlying S3 source and stores it in the cache for future requests.
 
-- **Data sources**: The underlying data source reads data directly from Parquet files stored in the Caltrans S3 bucket.
+- [**Data sources**](./reference/data-sources.md): The underlying data source reads data directly from Parquet files stored in the Caltrans S3 bucket.
 
 ## Basic usage
 
