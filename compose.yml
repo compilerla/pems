@@ -75,6 +75,21 @@ services:
     ports:
       - "${STREAMLIT_LOCAL_PORT:-8501}:8501"
 
+  redis:
+    image: redis:8
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    command: redis-server --save 60 1 --loglevel notice
+    healthcheck:
+      test: redis-cli ping | grep PONG
+      interval: 1s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - redisdata:/data
+
 volumes:
   pgdata:
+    driver: local
+  redisdata:
     driver: local

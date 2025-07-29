@@ -3,11 +3,11 @@ import re
 import pandas as pd
 import streamlit as st
 
-from pems_data.sources.s3 import S3DataSource
-from pems_data.services.stations import StationsService
+from pems_data import ServiceFactory
 
-BUCKET = S3DataSource()
-STATIONS = StationsService(data_source=BUCKET)
+FACTORY = ServiceFactory()
+STATIONS = FACTORY.stations_service()
+S3 = FACTORY.s3_source
 
 
 @st.cache_data(ttl=3600)  # Cache for 1 hour
@@ -28,7 +28,7 @@ def get_available_days() -> set:
     def match(m: re.Match):
         return int(m.group(1))
 
-    return BUCKET.get_prefixes(pattern, initial_prefix=STATIONS.imputation_detector_agg_5min, match_func=match)
+    return S3.get_prefixes(pattern, initial_prefix=STATIONS.imputation_detector_agg_5min, match_func=match)
 
 
 @st.cache_data(ttl=300)  # Cache for 5 minutes

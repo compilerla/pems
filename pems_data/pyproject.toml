@@ -3,7 +3,15 @@ name = "pems_data"
 description = "Common data access library for PeMS."
 dynamic = ["version"]
 requires-python = ">=3.12"
-dependencies = ["boto3==1.39.7", "pandas==2.3.0"]
+dependencies = [
+    "boto3==1.39.7",
+    "pandas==2.3.0",
+    "pyarrow==21.0.0",
+    "redis==6.2.0",
+]
+
+[project.scripts]
+pems-cache = "pems_data.cli:cache"
 
 [build-system]
 requires = ["setuptools>=75", "setuptools_scm>=8"]
