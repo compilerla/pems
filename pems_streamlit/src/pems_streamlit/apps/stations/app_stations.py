@@ -6,6 +6,7 @@ import streamlit as st
 from pems_data import ServiceFactory
 
 from pems_streamlit.components.map_station_summary import map_station_summary
+from pems_streamlit.components.plot_5_min_traffic_data import plot_5_min_traffic_data
 
 FACTORY = ServiceFactory()
 STATIONS = FACTORY.stations_service()
@@ -57,6 +58,14 @@ def main():
         df_station_metadata["STATION_ID"],
     )
 
+    quantity = st.multiselect("Quantity", ["VOLUME_SUM", "OCCUPANCY_AVG", "SPEED_FIVE_MINS"])
+
+    num_lanes = int(df_station_metadata[df_station_metadata["STATION_ID"] == station]["PHYSICAL_LANES"].iloc[0])
+    lane = st.multiselect(
+        "Lane",
+        list(range(1, num_lanes + 1)),
+    )
+
     with map_placeholder:
         df_selected_station = df_station_metadata.query("STATION_ID == @station")
         map_station_summary(df_selected_station)
@@ -67,7 +76,12 @@ def main():
 
     if station_data_button:
         df_station_data = load_station_data(station)
+        filtered_df = df_station_data[
+            (df_station_data["SAMPLE_TIMESTAMP"].dt.day.isin(days)) & (df_station_data["LANE"].isin(lane))
+        ]
         st.dataframe(df_station_data, use_container_width=True)
+        filtered_df_sorted = filtered_df.sort_values(by="SAMPLE_TIMESTAMP")
+        plot_5_min_traffic_data(filtered_df_sorted, quantity, lane)
 
 
 if __name__ == "__main__":
