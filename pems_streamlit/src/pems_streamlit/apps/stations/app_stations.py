@@ -90,7 +90,6 @@ def main():
             filtered_df = df_station_data[
                 (df_station_data["SAMPLE_TIMESTAMP"].dt.day.isin(days)) & (df_station_data["LANE"].isin(lane))
             ]
-            st.dataframe(df_station_data, use_container_width=True)
             filtered_df_sorted = filtered_df.sort_values(by="SAMPLE_TIMESTAMP")
             plot_5_min_traffic_data(filtered_df_sorted, quantity, lane)
 
