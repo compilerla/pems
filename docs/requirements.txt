@@ -4,3 +4,5 @@ mkdocs-awesome-pages-plugin
 mkdocs-macros-plugin
 mkdocs-material==9.6.16
 mkdocs-redirects
+mkdocstrings
+mkdocstrings-python

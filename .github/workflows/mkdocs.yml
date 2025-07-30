@@ -36,11 +36,13 @@ jobs:
         with:
           python-version-file: .github/workflows/.python-version
           cache: pip
-          cache-dependency-path: "docs/requirements.txt"
+          cache-dependency-path: |
+            "**/pyproject.toml"
+            "docs/requirements.txt"
 
       - name: Build MkDocs website
         run: |
-          pip install -r docs/requirements.txt
+          pip install ./pems_data -r docs/requirements.txt
           mkdocs build
 
       - name: Install Netlify CLI
@@ -86,6 +88,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: .github/workflows/.python-version
+          cache: pip
+          cache-dependency-path: |
+            "**/pyproject.toml"
+            "docs/requirements.txt"
+
+      - name: Install local pacakges
+        run: |
+          pip install ./pems_data
 
       - name: Deploy docs
         uses: mhausenblas/mkdocs-deploy-gh-pages@master

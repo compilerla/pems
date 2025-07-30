@@ -19,7 +19,7 @@ class TestS3DataSource:
         assert S3DataSource("name").name == "name"
 
     def test_name_default(self):
-        assert S3DataSource().name == S3DataSource.default_bucket
+        assert S3DataSource().name == S3DataSource().default_bucket
 
     def test_get_prefixes__default(self, data_source: S3DataSource, mock_s3):
         result = data_source.get_prefixes()
