@@ -1,0 +1,59 @@
+Parameters:
+  App:
+    Type: String
+    Description: Your application's name.
+  Env:
+    Type: String
+    Description: The name of the environment being deployed.
+  VPCID:
+    Type: String
+    Description: The ID of the VPC for the environment.
+    Default: ""
+  PrivateSubnets:
+    Type: String
+    Description: The IDs of the private subnets for the environment.
+    Default: ""
+
+Resources:
+  # Security group for the Redis cluster
+  RedisSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Security group for the redis cluster"
+      VpcId: !Ref VPCID
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 6379
+          ToPort: 6379
+          SourceSecurityGroupId: !ImportValue
+            "Fn::Sub": "${App}-${Env}-EnvironmentSecurityGroup" # Allows access from services in the env
+
+  # The Redis subnet group
+  RedisSubnetGroup:
+    Type: AWS::ElastiCache::SubnetGroup
+    Properties:
+      Description: "Subnet group for the redis cluster"
+      SubnetIds: !Split [",", !Ref PrivateSubnets]
+
+  # The Redis cluster itself
+  RedisCluster:
+    Type: AWS::ElastiCache::ReplicationGroup
+    Properties:
+      Engine: redis
+      ReplicationGroupId: !Sub "${App}-${Env}-redis"
+      ReplicationGroupDescription: "Redis cluster for the environment"
+      CacheNodeType: cache.t3.small
+      NumNodeGroups: 1
+      ReplicasPerNodeGroup: 1
+      AutomaticFailoverEnabled: true
+      CacheSubnetGroupName: !Ref RedisSubnetGroup
+      SecurityGroupIds:
+        - !Ref RedisSecurityGroup
+
+Outputs:
+  RedisURL:
+    Description: The connection endpoint for the redis cluster.
+    Value: !GetAtt RedisCluster.PrimaryEndPoint.Address
+    Export:
+      # This export name is how services will find the Redis URL.
+      Name: !Sub "${App}-${Env}-RedisURL"
