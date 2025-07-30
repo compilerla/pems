@@ -97,12 +97,10 @@ jobs:
             "**/pyproject.toml"
             "docs/requirements.txt"
 
-      - name: Install local pacakges
+      - name: Install MkDocs requirements
         run: |
-          pip install ./pems_data
+          pip install ./pems_data -r docs/requirements.txt
 
-      - name: Deploy docs
-        uses: mhausenblas/mkdocs-deploy-gh-pages@master
-        env:
-          REQUIREMENTS: docs/requirements.txt
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Deploy MkDocs website
+        run: |
+          mkdocs gh-deploy --force
