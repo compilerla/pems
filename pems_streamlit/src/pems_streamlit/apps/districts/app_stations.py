@@ -34,7 +34,7 @@ def get_available_days() -> set:
     return S3.get_prefixes(pattern, initial_prefix=STATIONS.imputation_detector_agg_5min, match_func=match)
 
 
-@st.cache_data(ttl=300)  # Cache for 5 minutes
+@st.cache_data(ttl=3600)  # Cache for 1 hour
 def load_station_data(station_id: str) -> pd.DataFrame:
     """
     Loads station data for a specific station.

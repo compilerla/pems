@@ -74,6 +74,6 @@ class TestStationsService:
 
         cache_opts = data_source.read.call_args.kwargs["cache_opts"]
         assert station_id in cache_opts["key"]
-        assert cache_opts["ttl"] == 300
+        assert cache_opts["ttl"] == 3600
 
         pd.testing.assert_frame_equal(result, df)
