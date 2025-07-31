@@ -53,22 +53,24 @@ def main():
 
     map_placeholder = st.empty()
 
-    station = st.selectbox(
-        "Station",
-        df_station_metadata["STATION_ID"],
-    )
+    station = st.selectbox("Station", df_station_metadata["STATION_ID"], index=None)
 
     quantity = st.multiselect("Quantity", ["VOLUME_SUM", "OCCUPANCY_AVG", "SPEED_FIVE_MINS"])
 
-    num_lanes = int(df_station_metadata[df_station_metadata["STATION_ID"] == station]["PHYSICAL_LANES"].iloc[0])
-    lane = st.multiselect(
-        "Lane",
-        list(range(1, num_lanes + 1)),
-    )
+    if station:
+        num_lanes = int(df_station_metadata[df_station_metadata["STATION_ID"] == station]["PHYSICAL_LANES"].iloc[0])
+        lane = st.multiselect(
+            "Lane",
+            list(range(1, num_lanes + 1)),
+        )
 
     with map_placeholder:
-        df_selected_station = df_station_metadata.query("STATION_ID == @station")
-        map_station_summary(df_selected_station)
+        if station:
+            df_selected_station = df_station_metadata.query("STATION_ID == @station")
+            map_station_summary(df_selected_station)
+        else:
+            # map summary for all stations in District
+            pass
 
     days = st.multiselect("Days", get_available_days())
 
