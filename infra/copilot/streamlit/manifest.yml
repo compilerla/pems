@@ -37,6 +37,9 @@ network:
 #
 variables: # Pass environment variables as key value pairs.
   STREAMLIT_BASE_URL: /streamlit
+  REDIS_HOSTNAME:
+    from_cfn: ${COPILOT_APPLICATION_NAME}-${COPILOT_ENVIRONMENT_NAME}-RedisURL
+  REDIS_PORT: "6379"
 #secrets:                      # Pass secrets from AWS Systems Manager (SSM) Parameter Store.
 #  GITHUB_TOKEN: GITHUB_TOKEN  # The key is the name of the environment variable, the value is the name of the SSM parameter.
 
