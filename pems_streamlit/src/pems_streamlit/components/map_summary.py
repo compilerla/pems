@@ -2,6 +2,20 @@ import pandas as pd
 import streamlit as st
 
 
+def map_district_summary(df_station_metadata: pd.DataFrame):
+
+    map_col, info_col = st.columns([0.6, 0.4])
+
+    with map_col:
+        map_df = df_station_metadata.rename(columns={"LATITUDE": "latitude", "LONGITUDE": "longitude"})
+        map_df_cleaned = map_df.dropna(subset=["latitude", "longitude"])
+        st.map(map_df_cleaned[["latitude", "longitude"]], height=265)
+
+    with info_col:
+        with st.container(border=True):
+            st.markdown(f"**Stations** {df_station_metadata['STATION_ID'].nunique()}")
+
+
 def map_station_summary(df_station_metadata: pd.DataFrame):
 
     map_col, info_col = st.columns([0.6, 0.4])

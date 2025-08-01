@@ -5,7 +5,7 @@ import streamlit as st
 
 from pems_data import ServiceFactory
 
-from pems_streamlit.components.map_station_summary import map_station_summary
+from pems_streamlit.components.map_summary import map_district_summary, map_station_summary
 from pems_streamlit.components.plot_5_min_traffic_data import plot_5_min_traffic_data
 
 FACTORY = ServiceFactory()
@@ -69,8 +69,7 @@ def main():
             df_selected_station = df_station_metadata.query("STATION_ID == @station")
             map_station_summary(df_selected_station)
         else:
-            # map summary for all stations in District
-            pass
+            map_district_summary(df_station_metadata)
 
     days = st.multiselect("Days", get_available_days())
 
