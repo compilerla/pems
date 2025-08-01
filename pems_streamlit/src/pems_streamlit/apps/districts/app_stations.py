@@ -12,6 +12,8 @@ FACTORY = ServiceFactory()
 STATIONS = FACTORY.stations_service()
 S3 = FACTORY.s3_source
 
+st.set_page_config(layout="wide")
+
 
 @st.cache_data(ttl=3600)  # Cache for 1 hour
 def load_station_metadata(district_number: str) -> pd.DataFrame:
