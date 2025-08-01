@@ -80,7 +80,7 @@ class StationsService:
             value (pandas.DataFrame): The station's data as a DataFrame.
         """
 
-        cache_opts = {"key": self._build_cache_key("imputed", "agg", "5m", "station", station_id), "ttl": 300}  # 5 minutes
+        cache_opts = {"key": self._build_cache_key("imputed", "agg", "5m", "station", station_id), "ttl": 3600}  # 1 hour
         columns = [
             "STATION_ID",
             "LANE",

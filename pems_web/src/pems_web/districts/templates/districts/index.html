@@ -14,17 +14,9 @@
             </div>
             <div class="col-lg-10 pb-lg-5">
                 {% block districts-content %}
-                    <div class="row">
-                        <div class="col-lg-4 border">
-                            <h2>Form</h2>
-                        </div>
-                        <div class="col-lg-8 border">
-                            <h2>Chart</h2>
-                        </div>
-                    </div>
                     <div class="row" style="min-height: 450px;">
-                        <div class="col-lg-12 border">
-                            <iframe title="District visualizations" class="w-100 h-100" src="{{ streamlit.url }}/stations--stations?embed=true">
+                        <div class="col-lg-12">
+                            <iframe title="District visualizations" class="w-100 h-100" src="{{ streamlit.url }}/districts--stations?embed=true">
                             </iframe>
                         </div>
                     </div>

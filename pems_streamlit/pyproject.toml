@@ -8,6 +8,7 @@ dependencies = [
     # local package reference
     # a wheel for this package is built during Docker build
     "pems_data",
+    "plotly==6.2.0",
     "streamlit==1.45.1",
 ]
 
