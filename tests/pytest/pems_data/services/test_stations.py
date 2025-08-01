@@ -33,6 +33,7 @@ class TestStationsService:
         assert data_source.read.call_args.args[0] == service.metadata_file
         assert data_source.read.call_args.kwargs["columns"] == [
             "STATION_ID",
+            "CONTROLLER_ID",
             "NAME",
             "PHYSICAL_LANES",
             "STATE_POSTMILE",

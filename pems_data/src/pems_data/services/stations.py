@@ -52,6 +52,7 @@ class StationsService:
         cache_opts = {"key": self._build_cache_key("metadata", "district", district_number), "ttl": 3600}  # 1 hour
         columns = [
             "STATION_ID",
+            "CONTROLLER_ID",
             "NAME",
             "PHYSICAL_LANES",
             "STATE_POSTMILE",

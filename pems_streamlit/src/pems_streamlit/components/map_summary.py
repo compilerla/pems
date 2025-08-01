@@ -13,7 +13,10 @@ def map_district_summary(df_station_metadata: pd.DataFrame):
 
     with info_col:
         with st.container(border=True):
+            st.markdown(f"**Directional Distance** {df_station_metadata['LENGTH'].sum().round(1)} miles")
+            st.markdown(f"**Freeways** {df_station_metadata['FREEWAY'].nunique()}")
             st.markdown(f"**Stations** {df_station_metadata['STATION_ID'].nunique()}")
+            st.markdown(f"**Controllers** {df_station_metadata['CONTROLLER_ID'].nunique()}")
 
 
 def map_station_summary(df_station_metadata: pd.DataFrame):
