@@ -53,18 +53,23 @@ def main():
 
     df_station_metadata = load_station_metadata(district_number)
 
-    map_placeholder = st.empty()
+    col1, col2 = st.columns([0.25, 0.75])
 
-    station = st.selectbox("Station", df_station_metadata["STATION_ID"], index=None)
+    with col1:
+        station = st.selectbox("Station", df_station_metadata["STATION_ID"], index=None)
+        lane = None
+        if station:
+            num_lanes = int(df_station_metadata[df_station_metadata["STATION_ID"] == station]["PHYSICAL_LANES"].iloc[0])
+            lane = st.multiselect(
+                "Lane",
+                list(range(1, num_lanes + 1)),
+            )
+        quantity = st.multiselect("Quantity", ["VOLUME_SUM", "OCCUPANCY_AVG", "SPEED_FIVE_MINS"])
+        days = st.multiselect("Days", get_available_days())
+        station_data_button = st.button("Load Station Data", type="primary")
 
-    quantity = st.multiselect("Quantity", ["VOLUME_SUM", "OCCUPANCY_AVG", "SPEED_FIVE_MINS"])
-
-    if station:
-        num_lanes = int(df_station_metadata[df_station_metadata["STATION_ID"] == station]["PHYSICAL_LANES"].iloc[0])
-        lane = st.multiselect(
-            "Lane",
-            list(range(1, num_lanes + 1)),
-        )
+    with col2:
+        map_placeholder = st.empty()
 
     with map_placeholder:
         if station:
@@ -73,15 +78,13 @@ def main():
         else:
             map_district_summary(df_station_metadata)
 
-    days = st.multiselect("Days", get_available_days())
-
-    station_data_button = st.button("Load Station Data", type="primary")
-
     error_placeholder = st.empty()
     plot_placeholder = st.empty()
 
     if station_data_button:
         error_messages = []
+        if not station:
+            error_messages.append("- Please select a station to proceed.")
         if len(quantity) == 0 or len(quantity) > 2:
             error_messages.append("- Please select one or two quantities to proceed.")
         if not lane:
