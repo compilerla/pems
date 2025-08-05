@@ -1,4 +1,5 @@
 import re
+import time
 
 import pandas as pd
 import streamlit as st
@@ -72,6 +73,7 @@ def main():
         map_placeholder = st.empty()
 
     with map_placeholder:
+        time.sleep(0.1)
         if station:
             df_selected_station = df_station_metadata.query("STATION_ID == @station")
             map_station_summary(df_selected_station)
