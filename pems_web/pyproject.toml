@@ -4,7 +4,7 @@ description = "The main Django application for the PeMS project."
 dynamic = ["version"]
 requires-python = ">=3.12"
 dependencies = [
-    "Django==5.2.3",
+    "Django==5.2.6",
     "gunicorn==23.0.0",
     "psycopg[binary,pool]==3.2.9",
 ]
