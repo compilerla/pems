@@ -1,14 +1,10 @@
+_As of October 2025, this project has ended and the repository is now archived._
+
 # PeMS
 
 Caltrans Performance Measurement System
 
 PeMS is open-source software that is designed, developed, and maintained by [Compiler LLC](https://compiler.la) on behalf of Caltrans Traffic Operations.
-
-## Current Work
-
-We do sprint planning and track day-to-day work in our [Project Board](https://github.com/orgs/compilerla/projects/3/views/1).
-
-See our current [Milestones](https://github.com/compilerla/pems/milestones) for a higher level view of project progress.
 
 ## Product Roadmap
 
